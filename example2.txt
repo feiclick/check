@@ -1,0 +1,58 @@
+using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace UnitTestProject1
+{
+    [TestClass]
+    public class UnitTest1
+    {
+        [TestMethod]
+        public void PingHome()
+        {
+            
+     var client = new RestClient();
+
+     client.BaseUrl = "url";
+     var request = new RestRequest("resource", Method.GET);
+
+                request.Resource = "/AgendaBuilder/GetAgenda/";
+
+                //request.AddHeader("header", "value");
+
+                var response = client.Execute(request) as RestResponse;
+
+     if (response != null && ((response.StatusCode == HttpStatusCode.OK)))
+     {
+         var arr = JsonConvert.DeserializeObject<JArray>(response.Content);
+     }
+     else if (response != null)
+     {
+         MessageBox.Show(string.Format
+         ("Status code is {0} ({1}); response status is {2}",
+                response.StatusCode, response.StatusDescription, response.ResponseStatus));
+     }  
+}
+
+        }
+
+       /* // Arrange
+        var controller = new HomeController();
+        controller.Request = new HttpRequestMessage();
+        controller.Configuration = new HttpConfiguration();
+
+        // Act
+        var response = controller.Get();
+
+        // Assert
+        Home home;
+        Assert.IsTrue(response.TryGetContentValue<value>(out value));
+            Assert.AreEqual(value, );
+            */
+
+    }
+
+
+
+
+
+
