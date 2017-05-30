@@ -1,0 +1,28 @@
+///////API controller//////////
+Listing 1: The ProductsController Class
+
+public class ProductsController : ApiController
+{
+  private readonly IProductRepository _repository;
+
+  public ProductsController()
+  {
+    _repository = new InMemoryProductRepository();
+  }
+
+  // GET api/products
+  public IEnumerable<Product> Get()
+  {
+    return _repository.GetAll();
+  }
+
+  // GET api/products/5
+  public Product Get(int id)
+
+////////////////
+
+http://restsharp.org/
+
+https://visualstudiomagazine.com/articles/2015/10/01/consume-a-webapi.aspx 
+
+https://www.codeproject.com/Tips/668625/Simple-Usages-of-HttpWebRequest-and-RestSharp-with 
