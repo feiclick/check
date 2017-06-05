@@ -1,0 +1,131 @@
+using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using RestSharp;
+
+
+namespace ASI.AB.APITests
+
+{
+
+    [TestClass]
+    public class AgendaBuilderAPI
+    {
+
+        [TestInitialize]
+        var client = new RestClient("http://172.22.173.195/agendabuilder/getagenda/");
+
+        String MainTitle = "MainTitle";
+        String SubTitle1 = "SubTitle1";
+        String SubTitle2 = "SubTitle2";
+        String Title1 = "Title1";
+        String Title2 = "Title2";
+        String Text1 = "Text1";
+        String Text2 = "Text2";
+        String Text3 = "Text3";
+        String MainImage = "MainImage";
+        String SubImage = "SubImage";
+
+        [TestMethod]
+        /*//GET
+        public void pingHome()
+        {
+
+            var client = new RestClient("http://localhost:8080/home/get/");
+            var pinghomeRequest = new RestRequest(Method.GET);
+
+            IRestResponse reponse = client.Execute(pinghomeRequest);
+            var responsecode = pinghomeResponse.ResponseStatus;
+        }*/
+
+        //POST getAgenda 
+        public void getAgenda()
+        {
+
+            //client.AddHandler("application/octet-stream", new RestSharp.Deserializers.JsonDeserializer());
+            request.AddHeader("content-type", "application/json");
+
+            var getAgendaReq = new RestRequest(Method.POST);
+
+
+            getAgendaReq.RequestFormat = DataFormat.Json;
+
+
+
+            //getAgendaReq.AddBody(new { });
+            //ParameterType.RequestBody();
+            //getAgendaReq.AddParameter("application/json");
+
+            //generate document 
+            IRestResponse getAgendaResponse = client.Execute(getAgendaReq);
+            var responsecode = getAgendaResponse.ResponseStatus;
+
+            //assert 
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+
+
+            //download file .docx
+            client.DownloadData(getAgendaReq).SaveAs(FileName: @"E:\AB\Result\" + getAgenda + ".docx");
+
+        }
+
+
+
+
+        /*[TestMethod]
+         * 1 section
+         * muti sections
+         * file type = null/0/1/2
+         * section type = null/0/1/2
+         * post with different font, size, colour
+         * post without font, size, colour
+         * post with Main image only
+         * post with subImage_logo only
+         *
+         * post without fileType
+         * post without section type
+         * 
+         * 
+         * 
+         * 
+        //POST filetype_0/1
+        //[ExpectedException(typeof(System.NullReferenceException))]??
+        public void mainImage()
+        {
+            var mainImage = new RestRequest(Method.POST);
+
+            request.RequestFormat = DataFormat.Json;
+
+            mainTitleRequest.AddBody(new {  });
+
+            client.Execute(request);
+
+
+
+            //request.AddParameter("FieldType", "0/1");
+
+            //request.AddHeader("Content-Type", "application/octet-stream");
+
+            //var request = new RestRequest("byteArraryofimage", MethodAccessException.POST);
+
+            //client.AddHandler("application/octet-stream", new RestSharp.Deserializers.JsonDeserializer());
+
+
+        }
+        */
+
+
+
+
+
+    }
+}
+
+
+
+
+
+
+
+
+
+
