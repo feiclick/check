@@ -1,0 +1,272 @@
+using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using RestSharp;
+using Newtonsoft.Json.Linq;
+
+namespace SpectrumTest
+{
+    [TestClass]
+    public class alerts
+    {
+        // environment related variables
+        String environment = "..............";
+        String Client = "";
+        String cmUserName = "qasilver";
+        String cmPassWord = "qasilverM99";
+        String ppUserName = "qapartnow";
+        String ppPassword = "qapartnowM99";
+
+        //rest related variables
+        String reqLogin = "api/login";
+        String reqUnReadAnnoucement = "api/announcements/unread";
+        String updatePharmacy = "api/profile/updatepharmacy";
+        String updateAddress = "api/profile/updateaddress";
+
+
+        [TestMethod]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.Description("Validate demographic alerts  - Pharmacy details")]
+        public void DemographicAlertsPharmacyDetails()
+        {
+            //** Test to verify the alerts for demographic change - changing pharmacy name and address
+            //--Setting the client and login as CM
+            
+            var clientCM = new RestClient("......................");
+            clientCM.CookieContainer = new System.Net.CookieContainer();
+            var casemanagerRequest = new RestRequest("api/login", Method.POST);
+
+            casemanagerRequest.RequestFormat = DataFormat.Json;
+            casemanagerRequest.AddBody(new { userName = "qasilver", password = "qasilverM99" });
+
+            //// Executing the request
+            IRestResponse casemanagerResponse = clientCM.Execute(casemanagerRequest);
+            var responsecode = casemanagerResponse.ResponseStatus;
+
+            // ---Executing unread annoucements
+            var casemanagerAnnounceReq = new RestRequest("api/announcements/unread", Method.GET);
+            IRestResponse cmAnnouceResponse = clientCM.Execute(casemanagerAnnounceReq); 
+            var responseContent = cmAnnouceResponse.Content;
+
+            // ---value of alerts before trigger
+            var _obj = JObject.Parse(responseContent);
+            int countAlertBfr = (int)_obj["data"]["alerts"];
+
+            // ---login as participants
+
+            var clientCM1 = new RestClient("........................);            
+            clientCM1.CookieContainer = new System.Net.CookieContainer();
+            var ppRequest = new RestRequest("api/login", Method.POST);
+
+
+            ppRequest.RequestFormat = DataFormat.Json;
+            ppRequest.AddBody(new { userName = "qapartnow", password = "qapartnowM99" });
+            IRestResponse PPResponse = clientCM1.Execute(ppRequest);
+            var xcsr = PPResponse.Cookies[1].Value;
+            var id = PPResponse.Cookies[2].Value;
+            var ppResponsecode = PPResponse.ResponseStatus;
+
+
+            // --- post request for update pharmacy details
+            var ppUpdateRequest2 = new RestRequest("api/profile/updatepharmacy", Method.POST);
+            ppUpdateRequest2.AddHeader("X-Csrf", xcsr);
+            ppUpdateRequest2.AddHeader("X-UID", id);
+            ppUpdateRequest2.RequestFormat = DataFormat.Json;
+            ppUpdateRequest2.AddBody(new { name = "ACME AFTER update", phoneNumber = "1111111111" });            
+            IRestResponse PPupdateResponse = clientCM1.Execute(ppUpdateRequest2);
+            var code = PPupdateResponse.StatusCode;
+
+            // --- Executing the CM unread annoucement
+            var casemanagerafterAnnounceReq = new RestRequest("api/announcements/unread", Method.GET);
+            IRestResponse cmAnnouceAfterResponse = clientCM.Execute(casemanagerafterAnnounceReq);
+            var finalResponseContent = cmAnnouceAfterResponse.Content;
+
+             // --- validate CM alerts after the trigger 
+            _obj = JObject.Parse(finalResponseContent);
+            int countAlertAfter = (int)_obj["data"]["alerts"];
+
+
+
+            // --- clean up  update pharmacy to another value
+            //var ppUpdateRequest2 = new RestRequest("api/profile/updatepharmacy", Method.POST);
+             // TBD   
+
+
+            Assert.AreEqual(countAlertBfr + 1, countAlertAfter);            
+
+        }
+
+        [TestMethod]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.Description("Validate MIR")]
+        public void validateMIRAlerts()
+        {
+            //--Setting the client and login as CM
+
+            var clientCM = new RestClient(".......................");
+            clientCM.CookieContainer = new System.Net.CookieContainer();
+            var casemanagerRequest = new RestRequest("api/login", Method.POST);
+
+            casemanagerRequest.RequestFormat = DataFormat.Json;
+            casemanagerRequest.AddBody(new { userName = "qasilver", password = "qasilverM99" });
+
+            //// Executing the request
+            IRestResponse casemanagerResponse = clientCM.Execute(casemanagerRequest);
+            var responsecode = casemanagerResponse.ResponseStatus;
+
+            // ---Executing unread annoucements
+            var casemanagerAnnounceReq = new RestRequest("api/announcements/unread", Method.GET);
+            IRestResponse cmAnnouceResponse = clientCM.Execute(casemanagerAnnounceReq);
+            var responseContent = cmAnnouceResponse.Content;
+
+            // ---value of alerts before trigger
+            var _obj = JObject.Parse(responseContent);
+            int countAlertBfr = (int)_obj["data"]["alerts"];
+
+            // ---login as participants
+
+            var clientCM1 = new RestClient("..........................");
+            clientCM1.CookieContainer = new System.Net.CookieContainer();
+            var ppRequest = new RestRequest("api/login", Method.POST);
+
+
+            ppRequest.RequestFormat = DataFormat.Json;
+            ppRequest.AddBody(new { userName = "qapartnow", password = "qapartnowM99" });
+
+            IRestResponse PPResponse = clientCM1.Execute(ppRequest);
+            var xcsr = PPResponse.Cookies[1].Value;
+            var id = PPResponse.Cookies[2].Value;
+            var ppResponsecode = PPResponse.ResponseStatus;
+
+
+            // --- post request for update pharmacy details
+
+            var ppUpdateRequest2 = new RestRequest("api/monitoringinterruption/request", Method.POST);
+            ppUpdateRequest2.AddHeader("X-Csrf", xcsr);
+            ppUpdateRequest2.AddHeader("X-UID", id);
+            ppUpdateRequest2.RequestFormat = DataFormat.Json;
+
+            ppUpdateRequest2.AddBody(new { typeId = "eb831a85-dda6-4085-9b6f-6a501cbc994f", fromDate = "2017-05-13T00:00:00" , toDate = "2017-05-13T00:00:00", isWithinCountry = "false" , comment = "abc" });
+            //{ "typeId":"eb831a85-dda6-4085-9b6f-6a501cbc994f","fromDate":"2017-05-11T00:00:00","toDate":"2017-05-11T00:00:00","isWithinCountry":"false","comment":null}
+            IRestResponse PPupdateResponse = clientCM1.Execute(ppUpdateRequest2);
+            var code = PPupdateResponse.StatusCode;
+
+            //Assert.
+
+            // --- Executing the CM unread annoucement
+            var casemanagerafterAnnounceReq = new RestRequest("api/announcements/unread", Method.GET);
+            IRestResponse cmAnnouceAfterResponse = clientCM.Execute(casemanagerafterAnnounceReq);
+            var finalResponseContent = cmAnnouceAfterResponse.Content;
+
+            
+            // --- validate CM alerts after the trigger 
+            _obj = JObject.Parse(finalResponseContent);
+            int countAlertAfter = (int)_obj["data"]["alerts"];
+            Assert.AreEqual(countAlertBfr + 1, countAlertAfter);
+
+            Console.WriteLine("This test is passing");
+
+            // --- clean up data
+        }
+    }
+}
+
+///////////////////////////////////////////////////// rough work starts here//////////////////////////////////////
+/*
+ * 
+ *             //ppUpdateRequest.AddBody(new { addressLine1 = "ACME Pharmacy1", addressLine2 = "fasdfs",city = "city", stateId = "99e064fb-d3d3-4b34-b098-672e5985350d", zipCode = "12345", county = "city", country = "USA" });
+            //IRestResponse PPupdateResponse = clientCM.Execute(ppUpdateRequest);
+
+            //var casemanagerafterAnnounceReq = new RestRequest("/test-silver/api/announcements/unread", Method.GET);
+           // IRestResponse cmAnnouceAfterResponse = clientCM.Execute(casemanagerafterAnnounceReq);
+            //var finalResponseContent = cmAnnouceAfterResponse.Content;
+
+
+// login as participant
+var clientCM = new RestClient(".................................1");
+//var clientPP = new RestClient("......................2");.
+clientCM.CookieContainer = new System.Net.CookieContainer();
+var ppRequest = new RestRequest("api/login", Method.POST);
+
+ppRequest.RequestFormat = DataFormat.Json;
+ppRequest.AddBody(new { userName = "bwater", password = "bwaterM99" });
+
+
+IRestResponse PPResponse = clientCM.Execute(ppRequest);
+var xcsr = PPResponse.Cookies[1].Value;
+var id = PPResponse.Cookies[2].Value;
+var ppResponsecode = PPResponse.ResponseStatus;
+var s2 = JObject.Parse(PPResponse.Content);
+
+
+//post call changing address - PP
+// var ppUpdateRequest = new RestRequest("api/profile/updateaddress", Method.POST);
+// ppUpdateRequest.AddHeader("Content-Type", "application/json");
+// ppUpdateRequest.RequestFormat = DataFormat.Json;
+
+var ppUpdateRequest2 = new RestRequest("api/profile/updatepharmacy", Method.POST);
+ppUpdateRequest2.AddHeader("X-Csrf", xcsr);
+ppUpdateRequest2.AddHeader("X-UID", id);
+//ppUpdateRequest2.AddHeader("Content-Type", "application/json");
+ppUpdateRequest2.RequestFormat = DataFormat.Json;
+
+ppUpdateRequest2.AddBody(new { name = "ACME Pharmacynn", phoneNumber = "9052323235" });
+
+IRestResponse PPupdateResponse = clientCM.Execute(ppUpdateRequest2);
+var s = JObject.Parse(PPupdateResponse.Content);
+var ppUpdateResponsecode = PPupdateResponse.ResponseStatus;
+// call the 
+Console.WriteLine("This test is passing");
+
+// rough work ends here
+//C#
+
+*/
+
+/*
+ * 
+ * 
+//int first = 1;
+//int second = 1;
+
+// Assert.AreEqual(first, second);
+//Console.WriteLine("This test is passing");
+ * 
+ *             //request.AddParameter("name", "Yourvalue");
+            // request.AddUrlSegment("id", 123);
+            //request.AddHeader("header", "value");
+            
+            /*
+            //HttpCookie[] cookies = request.getcoo
+            var stringCookieCM = "";
+            var prefix = "_ga=GA1.2.607864386.1493064378;";
+            var cert = "";
+           // client.CookieContainer = new System.Net.CookieContainer();
+                       //request1.AddHeader("Cookie", stringCookieCM);
+            //request1.AddHeader("X-Csrf", cert);
+            //request.AddHeader("Content-Type", "application/json");
+                      
+            // ends here
+           // foreach (RestSharp.RestResponseCookie _x in response.Cookies)
+            {
+                Console.WriteLine(_x.Name);
+                if (_x.Name == "@S_T")
+                {
+                    cert = _x.Value;
+                 }
+                stringCookieCM = stringCookieCM +" "+ _x.Name + "=" + _x.Value +";";
+
+            }
+
+            stringCookieCM = prefix + stringCookieCM;
+            Console.WriteLine("This test is passing");
+            //var client1 = new RestClient("https://cmsv4.affinityehealth.com");
+            // call unread annoucements for CM
+
+            */
+
+
+
+//var ppUpdateRequest = new RestRequest("api/profile/updateaddress", Method.POST);
+//ppUpdateRequest.AddHeader("X-Csrf", xcsr);
+//ppUpdateRequest.AddHeader("X-UID", id);
+////ppUpdateRequest2.AddHeader("Content-Type", "application/json");
+//ppUpdateRequest.RequestFormat = DataFormat.Json;
+
