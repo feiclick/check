@@ -1,0 +1,76 @@
+using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using RestSharp;
+using RestSharp.Extensions;
+using Newtonsoft.Json;
+
+
+
+
+namespace coverPage
+{
+    [TestClass]
+    public class AgendaBuilderAPI
+    {
+
+
+        [TestMethod]
+        public void getAgenda()
+        {
+            var client = new RestClient("http://172.22.173.195/agendabuilder/getagenda/");
+
+            var getAgendaReq = new RestRequest(Method.POST);
+            getAgendaReq.RequestFormat = DataFormat.Json;
+            getAgendaReq.AddHeader("content-type", "application/json");
+
+            var getSection = new Section {
+                SectionType = 0 };
+
+            var getField = new getField
+            {
+                {
+                Content = "test_MainTitle",
+                Name = "MainTitle",
+                Font = null,
+                FieldType = 0
+                },
+
+                {
+                 Content = "Sub Title 1",
+                 Font = null;
+                 Size = null,
+                 Color = "#FFFF660",
+                 Name = "SubTitle1",
+                 FieldType = 0
+                },
+
+            };
+
+         
+          
+            //var json = IRestRequest.JsonSerializer.Serialize(getField);
+     
+
+            //generate document 
+            IRestResponse getAgendaResponse = client.Execute(getAgendaReq);
+        
+            var responsecode = getAgendaResponse.ResponseStatus;
+
+
+            //assert  
+            Assert.IsNotNull(getAgendaResponse);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, getAgendaResponse.StatusCode);
+
+
+            //download file .docx
+
+
+            client.DownloadData(getAgendaReq).SaveAs(@"E:\AB\Result\" + "getAgend.docx");
+           
+           
+            //read the file
+
+
+        }
+    }
+}
