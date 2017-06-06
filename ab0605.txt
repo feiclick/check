@@ -1,0 +1,9 @@
+  ///assert///
+ if ((int)response.StatusCode / 100 != 2)
+            {
+                throw new AgendaBuilderException(response);
+            }
+////
+
+request.AddParameter("content", content); 
+request.AddFile("pic", bytes, fileName); 
