@@ -1,3 +1,31 @@
+////////
+
+public class Font
+{
+    public double? Size { get; set; }
+    public string Color { get; set; }
+}
+
+public class Field
+{
+    public string Content { get; set; }
+    public Font Font { get; set; }
+    public string Name { get; set; }
+    public int FieldType { get; set; }
+}
+
+public class Section
+{
+    public List<Field> Fields { get; set; }
+    public int SectionType { get; set; }
+    public string Color { get; set; }
+}
+
+public class RootObject
+{
+    public List<Section> Sections { get; set; }
+}
+//////
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RestSharp;
