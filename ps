@@ -1,0 +1,68 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Management.Automation;
+using System.Management.Automation.Runspaces;
+using System.Management; 
+
+
+namespace CallPowerShell
+{
+    class Program
+    {
+        static void main(string[] args)
+
+        {
+            string a = "docker run - d - p ****** us50";
+            string b = "docker inspect -f "{ { **** } }" us50";
+
+            // create powershell runspace
+            Runspace runspace = RunspaceFactory.CreateRunspace();
+            runspace.Open();
+
+            //create pipeline
+            Pipeline pipeline = runspace.CreatePipeline();
+
+            // run us50
+            pipeline.Commands.AddScript(a);
+
+            //get IP
+            pipeline.Commands.AddScript(b);
+
+            pipeline.Invoke();
+
+            var result = pipeline.Invoke();
+
+            //PowerShell ps = PowerShell.Create();
+            //ps.AddCommand("get-process").AddScript(a);
+
+            //Add("Set-ExecutionPolicy RemoteSigned");
+            //Add("Set-ExecutionPolicy-ExecutionPolicy Unrestricted");
+
+ 
+           
+
+        }
+    }
+
+    /*private static string script = File.ReadAllText(@"Path\setup.psl");
+    private static void CallPSl()
+    {
+
+        using (Runspace runspace = RunspaceFactory.CreateRunspace())
+        {
+            runspace.Open();
+            PowerShell ps = PowerShell.Create();
+            ps.Runspace = runspace;
+            ps.AddScript("script");
+            ps.Invoke();
+
+            ps.AddCommand("docker inspect").AddParameters(
+                
+                )
+        }
+    }*/
+
+}
