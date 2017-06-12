@@ -99,6 +99,25 @@ namespace Document_Api
 
 
 
+<html lang="en" debug="true">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width"/>
+<title>ASP.NET Web API Help Page</title>
+<style type="text/css">
+1
+.selassist-highlight { outline: thick dotted red; opacity: 0.5; background-color: yellow; } .selassist-tooltiptext-top { font-size: 12px !Important; opacity:1 !Important; background-color: black; color: #37EF50; text-align: center;  border-radius: 6px; padding: 5px; position: fixed; z-index: 999999999999;} .selassist-tooltiptext-top::after { content: " "; position: absolute; top: 100%; left: 20%; margin-left: -8px; border-width: 8px; border-style: solid; border-color: black transparent transparent transparent;} .selassist-tooltiptext-bottom { font-size: 12px !Important; opacity:1 !Important; background-color: black; color: #37EF50; text-align: center;  border-radius: 6px; padding: 5px; position: fixed; z-index: 999999999999;} .selassist-tooltiptext-bottom::after { content: " "; position: absolute; bottom: 100%; left: 20%; margin-left: -8px; border-width: 8px; border-style: solid; border-color: black transparent transparent transparent; transform: rotate(180deg);}
+</style>
+</head>
+<body>
+<link type="text/css" href="/Areas/HelpPage/HelpPage.css" rel="stylesheet"/>
+<header class="help-page">
+<div id="body" class="help-page">
+</body>
+<script src="chrome-extension://bmagokdooijbeehmkpknfglimnifench/googleChrome.js"/>
+</html>
+
+
 
 //save html file
 //byte[] response = restClient.DownloadData(restRequest);
