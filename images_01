@@ -1,0 +1,73 @@
+   1: private bool ImageCompareArray(Bitmap firstImage, Bitmap secondImage) 
+
+   2: {
+
+   3:     bool flag = true;
+
+   4:     string firstPixel;
+
+   5:     string secondPixel;
+
+   6:  
+
+   7:     if (firstImage.Width == secondImage.Width 
+
+   8:         && firstImage.Height == secondImage.Height)
+
+   9:     {
+
+  10:         for (int i = 0; i < firstImage.Width; i++)
+
+  11:         {
+
+  12:             for (int j = 0; j < firstImage.Height; j++)
+
+  13:             {
+
+  14:                 firstPixel = firstImage.GetPixel(i, j).ToString();
+
+  15:                 secondPixel = secondImage.GetPixel(i, j).ToString();
+
+  16:                 if (firstPixel != secondPixel)
+
+  17:                 {
+
+  18:                     flag = false;
+
+  19:                     break;
+
+  20:                 }
+
+  21:             }
+
+  22:         }
+
+  23:  
+
+  24:         if (flag == false)
+
+  25:         {
+
+  26:             return false;
+
+  27:         }
+
+  28:         else
+
+  29:         {
+
+  30:             return true;
+
+  31:         }
+
+  32:     }
+
+  33:     else
+
+  34:     {
+
+  35:         return false;
+
+  36:     }
+
+  37: }
