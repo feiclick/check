@@ -1,0 +1,19 @@
+http://www.cnblogs.com/minotmin/archive/2012/09/23/2699323.html 
+
+http://www.cnblogs.com/ceachy/articles/CSharp_Retrive_Page_Document.html
+
+http://www.jb51.net/article/41137.htm
+
+https://q.cnblogs.com/q/46111/
+
+ 正则表达式获取<td>和</td>之间的内容
+
+string str = @"<td>123/126/130</td><td>186/194</td></tr><tr><td>4</td><td><f>beijing</td><td>T60</td>
+Regex reg = new Regex(@"(?<=<td>)(.*?)(?=</td>)", RegexOptions.IgnoreCase);//[^(<td>))]
+
+MatchCollection mc = reg.Matches(str);
+
+foreach (Match m in mc)
+            {
+                webtext.Text += m.Value + "\r\n";
+            }
