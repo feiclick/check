@@ -1,0 +1,53 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Drawing;
+
+//add reference System.Drawing under project
+
+
+namespace compareImages
+{
+    class Program
+    {
+        Bitmap InputImage = new Bitmap (@"C:\AgendaBuilder\Images\AFR_hotel.jpg", true);
+        Bitmap OutputImage = new Bitmap (@"C:\AgendaBuilder\1.jpg", true);
+
+       static bool ImageCompareArray(Bitmap InputImage, Bitmap OutputImage)
+        {
+            bool flag = true;
+            string inputPixel;
+            string outputPixel;
+            if (InputImage.Width == OutputImage.Width && InputImage.Height == OutputImage.Height)
+            {
+                for (int i = 0; i < InputImage.Width; i++)
+                {
+                    for (int j = 0; j < InputImage.Height; j++)
+                    {
+                        inputPixel = InputImage.GetPixel(i, j).ToString();
+                        outputPixel = OutputImage.GetPixel(i, j).ToString();
+                        if (inputPixel != outputPixel)
+                        {
+                            flag = false; break;
+                        }
+                    }
+                }
+                if (flag == false)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+    }
+}
