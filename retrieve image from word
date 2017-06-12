@@ -1,0 +1,50 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+using SautinSoft.Document;
+using SautinSoft.Document.Drawing;
+
+
+namespace RetrieveImage
+{
+    class extractImage
+    {
+        static void Main(string[] args)
+        {
+            ExtractImagesFromDocument();
+        }
+        public static void ExtractImagesFromDocument()
+        {
+            string filePath = @"C:\\AgendaBuilder\\MainImage.docx";
+
+
+            DirectoryInfo imageDir = new DirectoryInfo(Path.GetDirectoryName(filePath));
+            string imageTemplate = "picture";
+            List<ImageData> imageInventory = new List<ImageData>();
+
+            DocumentCore dc = DocumentCore.Load(filePath);
+            // You may download the latest version of SDK here:      
+            // http://sautinsoft.com/products/docx-document/download.php    
+
+            // Extract all images from document 
+            foreach (DrawingElement de in dc.Document.GetChildElements(true, ElementType.DrawingElement))
+            {
+                if (de.Shape.ShapeType == ShapeType.Picture)
+                {
+                    Picture pict = (Picture)de.Shape;
+                    imageInventory.Add(pict.ImageData);
+                }
+            }
+
+            // Save all images 
+            for (int i = 0; i < imageInventory.Count; i++)
+            {
+                string imagePath = Path.Combine(imageDir.FullName, String.Format("{0}{1}.{2}", imageTemplate, i + 1, imageInventory[i].Format.ToString().ToLower()));
+                File.WriteAllBytes(imagePath, imageInventory[i].ImageStream.ToArray());
+            }
+        }
+    }
+}
