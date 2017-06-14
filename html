@@ -17,3 +17,122 @@ foreach (Match m in mc)
             {
                 webtext.Text += m.Value + "\r\n";
             }
+
+
+
+
+
+using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TidyManaged;
+using RestSharp;
+using RestSharp.Extensions;
+using System.Net;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using System.Diagnostics;
+
+namespace validateHTML
+{
+    [TestClass]
+    public class validateAPI_help
+    {
+
+        public RestClient restClient;
+        public RestRequest restRequest;
+        public IRestResponse restResponse;
+        public string Title { get; set; }
+        string regex = @"(?<=<title.*>)([\s\S]*)(?=</title>)";
+
+
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            // will be replaced by reading value from a file 
+            restClient = new RestClient("http://www.cftea.com/weixin");
+            restRequest = new RestRequest(Method.GET);
+           
+    }
+
+        [TestMethod]
+        public void Verify_API_help_Doc_home()
+        {
+
+            // ACT
+            IRestResponse restResponse = restClient.Execute(restRequest);
+           
+            var resultdata = restResponse.Content;
+
+            //Assert statusCode-200, 404
+
+            Assert.AreEqual(HttpStatusCode.OK, restResponse.StatusCode);
+            Assert.AreNotEqual(HttpStatusCode.NotFound, restResponse.StatusCode);
+
+          
+           // Assert.AreEqual(getContent, "application / xhtml + xml");
+
+            //Assert title;
+
+            Regex.Match(resultdata, @"(?<=<title.*>)([\s\S]*)(?=</title>)");
+     
+            Assert.AreEqual(resultdata, "ASP.NET Web API Help Page");
+
+            // assert ID
+            Assert.AreEqual("AgendaBuilder", restResponse.Content);
+
+
+        }
+
+        
+        /*
+       public string extract Title(string url)
+       {
+
+           // Regular expression for an HTML title
+           string regex = @"(?<=<title.*>)([\s\S]*)(?=</title>)";
+
+           // If the correct HTML header exists for HTML text, continue
+           if (new List<string>(restResponse.Headers).Contains("Content-Type")) && (restResponse.Headers["Content-Type"].StartsWith("text/html"))
+               {
+    
+                   // Extract the title
+                   Regex ex = new Regex(regex, RegexOptions.IgnoreCase);
+                   return ex.Match(restResponse).Value.Trim();
+               }
+
+           // Not a valid HTML page
+           return null;
+       }
+
+        //Get Content From Between HTML Tags
+        private List<string> getContent(string source, string startTag, string endTag)
+        {
+            List<string> content = new List<string>();
+
+            while (source.Contains(startTag))
+            {
+                content.Add(source.Substring(source.IndexOf(startTag) + startTag.Length, source.IndexOf(endTag) - (source.IndexOf(startTag) + startTag.Length)));
+                source = source.Remove(0, source.IndexOf(endTag) + endTag.Length);
+            }
+
+            return content;
+        }
+
+       
+           //get all links
+           public static string GetAllLinkText(string html)
+       {
+           StringBuilder sb = new StringBuilder();
+           Match m = Regex.Match(html.ToLower(), "<a href=.*?>(1,100})</a>");
+           while (m.Success)
+           {
+               sb.AppendLine(m.Result("$1"));
+               m.NextMatch();
+           }
+
+           return sb.ToString();
+       }*/
+    }
+}
+
