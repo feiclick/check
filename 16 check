@@ -29,24 +29,29 @@ namespace ASI.AB.ApiTests
         {
 
             // retrieving IP address 
-            string containerRegistry = test.AppSettings["AzureContainerRegistry"] ?? string.Empty;
-            string containerName = test.AppSettings["ContainerName"] ?? string.Empty;
-            DockerClient client = new DockerClientConfiguration(new Uri("npipe://./pipe/docker_engine")).CreateClient();
-            var containers = client.Containers.ListContainersAsync(new ContainersListParameters() { Limit = 10 }).Result;
-            var containerUnderTest = containers.FirstOrDefault(x => x.Image == $"{containerRegistry}/{containerName}" && x.State == "running");
-            string ipAddress = containerUnderTest != null ? containerUnderTest.NetworkSettings.Networks.FirstOrDefault().Value.IPAddress : "0.0.0.0";
+            //string containerRegistry = test.AppSettings["AzureContainerRegistry"]?? string.Empty;
+            //string containerName = test.AppSettings["ContainerName"] ?? string.Empty;
+            //DockerClient client = new DockerClientConfiguration(new Uri("npipe://./pipe/docker_engine")).CreateClient();
+            //var containers = client.Containers.ListContainersAsync(new ContainersListParameters() { Limit = 10 }).Result;
+            //var containerUnderTest = containers.FirstOrDefault(x => x.Image == $"{containerRegistry}/{containerName}" && x.State == "running");
+            //string ipAddress = containerUnderTest != null ? containerUnderTest.NetworkSettings.Networks.FirstOrDefault().Value.IPAddress : "0.0.0.0";
 
-            //restClient = new RestClient($"http://{ipAddress}/");
-            restClient = new RestClient("http://172.22.174.110/");
-            restRequest = new RestRequest("agendabuilder/getagenda", Method.POST);
-            //Setting path for download
-            String currentPath = System.IO.Directory
-                .GetParent(System.IO.Directory.GetParent(Environment.CurrentDirectory).ToString()).ToString();
+            String currentPath = System.IO.Directory.GetParent(System.IO.Directory.GetParent(Environment.CurrentDirectory).ToString()).ToString();
+            String strContainerFile = System.IO.Directory.GetParent(currentPath).ToString() +
+                                     "\\Docker\\WebApp\\containerIp.txt";
+            //Debug.WriteLine(a);
+            string ipAddress = GetIP(strContainerFile);
+                       
+
             downLoadPath = currentPath + "\\Resourses\\Template";
-            imagePath = currentPath + "\\Resourses\\Image";
+            imagePath = currentPath + "\\Resourses\\Template";
+
+            restClient = new RestClient($"http://{ipAddress}/");           
+            restRequest = new RestRequest("agendabuilder/getagenda", Method.POST);
 
 
         }
+
 
 
         [TestMethod]
@@ -286,7 +291,7 @@ namespace ASI.AB.ApiTests
             IRestResponse restResponse = restClient.Execute(restRequest);
             byte[] response = restClient.DownloadData(restRequest);
 
-           string downLoadPathTest4 = downLoadPath + "\\Texts.docx";
+            string downLoadPathTest4 = downLoadPath + "\\Texts.docx";
 
             File.WriteAllBytes(downLoadPathTest4, response);
             // retriving text from word based on location
@@ -476,7 +481,7 @@ namespace ASI.AB.ApiTests
             IRestResponse restResponse = restClient.Execute(restRequest);
             byte[] response = restClient.DownloadData(restRequest);
 
-           string downLoadPathTest6 = downLoadPath + "\\MainTitle20.docx";
+            string downLoadPathTest6 = downLoadPath + "\\MainTitle20.docx";
 
             File.WriteAllBytes(downLoadPathTest6, response);
             // retriving text from word based on location
@@ -711,7 +716,7 @@ namespace ASI.AB.ApiTests
             IRestResponse restResponse = restClient.Execute(restRequest);
             byte[] response = restClient.DownloadData(restRequest);
 
-           string downLoadPathTest9 = downLoadPath + "\\MainTitle_UpperLower.docx";
+            string downLoadPathTest9 = downLoadPath + "\\MainTitle_UpperLower.docx";
 
             File.WriteAllBytes(downLoadPathTest9, response);
             // retriving text from word based on location
@@ -875,7 +880,7 @@ namespace ASI.AB.ApiTests
 
         [TestMethod]
         //12. positive--Full section Color&Size
-        public void AB_ValidateDoc_FullSectioin_withoutImage_Color_size()
+        public void AB_ValidateDoc_FullSectioin_withouimages_Color_size()
         {
             Logger.Info("Starting test" + "-------------------------------------------");
             // ARRANGE
@@ -1010,17 +1015,19 @@ namespace ASI.AB.ApiTests
 
         
         //Images
-        [TestMethod]
+        [TestMethod] 
         //13. MainImage1 jpg
         public void AB_ValidateDoc_With_MainImage_jpg()
         {
+
+
             Logger.Info("Starting test" + "-------------------------------------------");
             // ARRANGE
             restRequest.RequestFormat = DataFormat.Json;
 
-
-            // using forming request
-            var agenda = new Agenda
+           
+        // using forming request
+        var agenda = new Agenda
             {
                 Sections = new List<SectionBase>
                 {
@@ -1074,25 +1081,28 @@ namespace ASI.AB.ApiTests
             }
 
             // Save all images 
+           
+
             for (int i = 0; i < imageInventory.Count; i++)
             {
                 string targetPath = Path.Combine(imageDir.FullName, String.Format("{0}{1}.{2}", imageTemplate, i + 1, imageInventory[i].Format.ToString().ToLower()));
                 File.WriteAllBytes(targetPath, imageInventory[i].ImageStream.ToArray());
             }
 
+
             // compare two images
 
-            //inputpath1 = imagePath + "\\coverPage.jpg";
-
             var InputImage = new Bitmap(imagePath + "\\coverPage.jpg");
-            var OutputImage = new Bitmap(imagePath + "\\ActualImage\\picture1.jpeg");
+            var OutputImage = new Bitmap(imagePath + "\\picture1.jpeg");
 
+            
             //assert result
             var result = ImageCompareArray(InputImage, OutputImage);
 
             Assert.IsTrue(result);
 
         }
+        
 
         [TestMethod]
         //14. MainImage2_gif
@@ -1101,7 +1111,7 @@ namespace ASI.AB.ApiTests
             Logger.Info("Starting test" + "-------------------------------------------");
             // ARRANGE
             restRequest.RequestFormat = DataFormat.Json;
-            
+
 
             // using forming request
             var agenda = new Agenda
@@ -1161,16 +1171,17 @@ namespace ASI.AB.ApiTests
             // Save all images 
             for (int i = 0; i < imageInventory.Count; i++)
             {
-                string targetPath = Path.Combine(imageDir.FullName, String.Format("{0}{1}.{2}", imageTemplate, count + 1, imageInventory[i].Format.ToString().ToLower()));
+                string targetPath = Path.Combine(imageDir.FullName, String.Format("{0}{1}.{2}", imageTemplate, count +1, imageInventory[i].Format.ToString().ToLower()));
                 File.WriteAllBytes(targetPath, imageInventory[i].ImageStream.ToArray());
             }
 
 
             // compare two images
 
-            var InputImage = new Bitmap(imagePath + "\\coverPage.jif");
-            var OutputImage = new Bitmap(imagePath + "\\ActualImage\\picture2.jpeg");
+            var InputImage = new Bitmap(imagePath + "\\coverPage.gif");
+            var OutputImage = new Bitmap(imagePath + "\\picture2.jpeg");
 
+            //var result
             var result = ImageCompareArray(InputImage, OutputImage);
 
             Assert.IsTrue(result);
@@ -1243,13 +1254,13 @@ namespace ASI.AB.ApiTests
             // Save all images 
             for (int i = 0; i < imageInventory.Count; i++)
             {
-                string imagePath = Path.Combine(imageDir.FullName, String.Format("{0}{1}.{2}", imageTemplate, count + 2, imageInventory[i].Format.ToString().ToLower()));
-                File.WriteAllBytes(imagePath, imageInventory[i].ImageStream.ToArray());
+                string targetPath = Path.Combine(imageDir.FullName, String.Format("{0}{1}.{2}", imageTemplate, count + 2, imageInventory[i].Format.ToString().ToLower()));
+                File.WriteAllBytes(targetPath, imageInventory[i].ImageStream.ToArray());
             }
 
             // compare two images
             var InputImage = new Bitmap(imagePath + "\\coverPage.bmp");
-            var OutputImage = new Bitmap(imagePath + "\\ActualImage\\picture3.jpeg");
+            var OutputImage = new Bitmap(imagePath + "\\picture3.jpeg");
 
             //var result
             var result = ImageCompareArray(InputImage, OutputImage);
@@ -1328,10 +1339,11 @@ namespace ASI.AB.ApiTests
 
             // compare two images
             var InputImage = new Bitmap(imagePath + "\\coverPage.png");
-            var OutputImage = new Bitmap(@"C:\\AgendaBuilder\\picture4.png");
+            var OutputImage = new Bitmap(imagePath + "\\picture4.jpeg");
 
             //var result
             var result = ImageCompareArray(InputImage, OutputImage);
+
             Assert.IsTrue(result);
 
         }
@@ -1403,13 +1415,13 @@ namespace ASI.AB.ApiTests
             // Save all images 
             for (int i = 0; i < imageInventory.Count; i++)
             {
-                string imagePath = Path.Combine(imageDir.FullName, String.Format("{0}{1}.{2}", imageTemplate, count + 4, imageInventory[i].Format.ToString().ToLower()));
-                File.WriteAllBytes(imagePath, imageInventory[i].ImageStream.ToArray());
+                string targetPath = Path.Combine(imageDir.FullName, String.Format("{0}{1}.{2}", imageTemplate, count + 4, imageInventory[i].Format.ToString().ToLower()));
+                File.WriteAllBytes(targetPath, imageInventory[i].ImageStream.ToArray());
             }
 
             // compare two images
-            var InputImage = new Bitmap(imagePath + "\\coverPage.jpg");
-            var OutputImage = new Bitmap(imagePath + "\\ActualImage\\picture5.png");
+            var InputImage = new Bitmap(imagePath + "\\AFR_logo.jpg");
+            var OutputImage = new Bitmap(imagePath + "\\picture5.png");
 
             //var result 
             var result = ImageCompareArray(InputImage, OutputImage);
@@ -1486,8 +1498,8 @@ namespace ASI.AB.ApiTests
             }
 
             // compare two images
-            var InputImage = new Bitmap(imagePath + @"\AFR_logo.gif");
-            var OutputImage = new Bitmap(imagePath + @"\ActualImage\picture6.jpeg");
+            var InputImage = new Bitmap(imagePath + "\\AFR_logo.gif");
+            var OutputImage = new Bitmap(imagePath + "\\picture6.png");
 
             //var result
             var result = ImageCompareArray(InputImage, OutputImage);
@@ -1532,7 +1544,7 @@ namespace ASI.AB.ApiTests
             IRestResponse restResponse = restClient.Execute(restRequest);
             byte[] response = restClient.DownloadData(restRequest);
 
-           string downLoadPathTest19 = downLoadPath + "\\SubImage_bmp.docx";
+            string downLoadPathTest19 = downLoadPath + "\\SubImage_bmp.docx";
             File.WriteAllBytes(downLoadPathTest19, response);//var responsecode = restResponse.ResponseStatus;
 
 
@@ -1566,8 +1578,8 @@ namespace ASI.AB.ApiTests
             }
 
             // compare two images
-            var InputImage = new Bitmap(imagePath + @"\AFR_logo.bmp");
-            var OutputImage = new Bitmap(imagePath + @"\ActualImage\picture7.png");
+            var InputImage = new Bitmap(imagePath + "\\AFR_logo.bmp");
+            var OutputImage = new Bitmap(imagePath + "\\picture7.png");
 
             // assert
             var result = ImageCompareArray(InputImage, OutputImage);
@@ -1643,8 +1655,8 @@ namespace ASI.AB.ApiTests
 
             // compare two images 
 
-            var InputImage = new Bitmap(imagePath + @"\AFR_logo.png");
-            var OutputImage = new Bitmap(imagePath + @"\ActualImage\picture1.png");
+            var InputImage = new Bitmap(imagePath + "\\AFR_logo.png");
+            var OutputImage = new Bitmap(imagePath + "\\picture8.png");
 
             //assert result 
             var result = ImageCompareArray(InputImage, OutputImage);
@@ -1814,16 +1826,16 @@ namespace ASI.AB.ApiTests
             // Save all images 
             for (int i = 0; i < imageInventory.Count; i++)
             {
-                string imagePath = Path.Combine(imageDir.FullName, String.Format("{0}{1}.{2}", imageTemplate, i + 1, imageInventory[i].Format.ToString().ToLower()));
-                File.WriteAllBytes(imagePath, imageInventory[i].ImageStream.ToArray());
+                string targetPath1 = Path.Combine(imageDir.FullName, String.Format("{0}{1}.{2}", imageTemplate, count + 8, imageInventory[i].Format.ToString().ToLower()));
+                File.WriteAllBytes(targetPath1, imageInventory[i].ImageStream.ToArray());               
             }
 
             // compare two images
 
-            var InputImage1 = new Bitmap(imagePath + @"\coverPage.jpg");
-            var OutputImage1 = new Bitmap(imagePath + @"\ActualImage\picture9.jpeg");
-            var InputImage2 = new Bitmap(imagePath + @"\AFR_logo.jpg");
-            var OutputImage2 = new Bitmap(imagePath + @"\ActualImage\picture10.jpeg");
+            var InputImage1 = new Bitmap(imagePath + "\\coverPage.jpg");
+            var OutputImage1 = new Bitmap(imagePath + "\\picture9.jpeg");
+            var InputImage2 = new Bitmap(imagePath + "\\AFR_logo.jpg");
+            var OutputImage2 = new Bitmap(imagePath + "\\picture9.png");
 
 
             // assert result 
@@ -2015,6 +2027,12 @@ namespace ASI.AB.ApiTests
             return br.ReadBytes((int)imageFileLength);
         }
 
+
+        public static string GetIP(string path)
+        {
+            String ip = File.ReadLines(path).First().Trim();
+            return ip;
+        }
 
 
     }
