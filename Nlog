@@ -1,0 +1,35 @@
+https://github.com/NLog/NLog.Web/wiki/Getting-started-with-ASP.NET-Core-(csproj---vs2017)
+https://github.com/NLog/NLog/wiki/Tutorial
+
+http://www.c-sharpcorner.com/blogs/sample-logging-using-nlog　ｓａｍｐｌｅ
+
+http://blog.csdn.net/u013419838/article/details/70142782 Encapsｕlation &set up
+http://blog.csdn.net/dsnq2011/article/details/51920265
+http://www.tuicool.com/articles/UN7Rjaq
+
+
+
+
+
+
+
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <configSections>
+    <section name="nlog" type="NLog.Config.ConfigSectionHandler, NLog"/>
+  </configSections>
+  <nlog autoReload="true" internalLogLevel="Trace" internalLogFile="logs/internalLog.txt">
+    <targets>
+      <target name="t1" type="File" fileName="${basedir}/logs/${shortdate}.log"
+              layout="${longdate} ${callsite} ${level}: 
+              ${message} ${event-context:item=exception} ${stacktrace} ${event-context:item=stacktrace}"/>
+      <target name="t2" type="Console" layout="${date:format=yyyyMMddHHmmss} ${callsite} ${level} ${message}"/>
+    </targets>
+    <rules>
+      <logger name="NLogConsoleExample" minlevel="Debug" maxlevel="Error" writeTo="t1,t2" />
+    </rules>
+  </nlog>
+    <startup> 
+        <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.5" />
+    </startup>
+</configuration>
