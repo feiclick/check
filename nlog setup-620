@@ -1,0 +1,63 @@
+
+Nlog.config, Nlog.xsd, package.config
+
+https://segmentfault.com/a/1190000008569175
+https://github.com/NLog/NLog/wiki/Configuration-file
+https://github.com/NLog/NLog/wiki/Configuration-API
+http://www.zhimengzhe.com/asp_netjiaocheng/305009.html
+http://www.cnblogs.com/felixnet/p/5498759.html
+http://blog.csdn.net/jun502525164/article/details/40352253
+
+
+1. 进行NLog的配置。首先在节点configuration>configSections下添加节点： 
+2. 
+
+1. 
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+	<configSections>
+		<section name="nlog" type="NLog.Config.ConfigSectionHandler, NLog" />
+	</configSections>
+	<nlog>
+		<targets>
+			<target name="logfile" type="file" fileName="L:\Public\TestAutomation\AgendaBuilder\TestReport\${cached:cached=true:Inner=${date:format=yyyy-MM-dd hh.mm.ss}:CacheKey=${shortdate}}-AgendaBuilderapi.log" layout="${longdate} ${uppercase:${level}} ${message}" deleteOldFileOnStartup="true" />
+		</targets>
+		<rules>
+			<logger name="*" writeTo="logfile" />
+		</rules>
+	</nlog>
+</configuration>
+
+/////////////////////////////
+
+<!-- write logs to file -->
+    <target name="file" xsi:type="AsyncWrapper" queueLimit="5000" overflowAction="Discard">
+      <target xsi:type="File" fileName="${basedir}/logs/${shortdate}.log" layout="${longdate} ${level:uppercase=true} ${event-context:item=Action} ${message} ${event-context:item=Amount} ${stacktrace}" />      
+    </target>
+
+<!--write log message to Visual Studio Output-->
+    <target name="debugger" xsi:type="Debugger" layout="NLog: ${date:format=HH\:mm\:ss} | ${level:uppercase=true:padding=-5} | ${message}" />
+  </targets>
+  
+<rules>
+    <!--TRACE,DEBUG,INFO,WARN,ERROR,FATAL-->
+    <logger name="*" minlevel="Trace" writeTo="debugger" />
+    <!--INFO,WARN,ERROR,FATAL-->
+    <logger name="*" minlevel="Info" writeTo="db" />
+    <!--DEBUG,INFO,WARN,ERROR,FATAL-->
+    <logger name="*" minlevel="Debug" writeTo="file" />    
+  </rules>
+</nlog>
+
+
+// use the log in project
+using nlog;
+namespace mynamespace
+{
+  public class myclass
+  {
+    private static logger logger = logmanager.getcurrentclasslogger();
+  }
+}
+
+
