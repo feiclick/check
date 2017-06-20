@@ -1,0 +1,67 @@
+https://stackoverflow.com/questions/3420737/file-delete-error-the-process-cannot-access-the-file-because-it-is-being-used-b
+ https://msdn.microsoft.com/en-us/library/xe0c2357(v=vs.110).aspx
+ 
+ 
+ [TestCleanup]
+public void MyTestCleanup()
+{
+    
+    //Forces an immediate garbage collection of all generations.
+    GC.Collect(); 
+    GC.WaitForPendingFinalizers();
+
+    // Removes 'MyDatabase.db' from the testing directory.
+    File.Delete(Path.Combine(this.TestContext.TestDeploymentDir, "MyDatabase.db"));
+}
+//////////////////////////
+ 
+ 
+ [TestCleanup()]
+        public void Cleanup()
+        {
+            MessageBox.Show("TestMethodCleanup");
+        }
+        
+        [ClassCleanup()]
+        public static void ClassCleanup()
+        {
+            MessageBox.Show("ClassCleanup");
+        }
+ 
+        [AssemblyCleanup()]
+        public static void AssemblyCleanup()
+        {
+            //MessageBox.Show("AssemblyCleanup");
+        }
+ 
+ ////////////////
+ [TestCleanup]
+public void CleanUp(){
+    if(Directory.Exists("mytestdata"))
+        Directory.Delete("mytestdata", true);
+}
+ 
+ 
+ ////////////
+ Example: Class1 -> ClassInitialize -> Test1 -> Test2 -> Test3 -> ClassCleanup -> Class2 -> ClassInitialize -> Test4 -> Test5 -> Test6 -> ClassCleanup -> Class3...
+ [TestClass]
+public class MyTests
+{
+   [ClassInitialize]
+   public void ClassInitialize() { Debug.Print("Running ClassInitialize"); }
+
+   [TestInitialize]
+   public void TestInitialize() { Debug.Print("Running    TestInitialize"); }
+
+   [TestMethod]
+   public void TestMethod1() { Debug.Print("Running       TestMethod1....."); }
+
+   [TestMethod]
+   public void TestMethod2() { Debug.Print("Running       TestMethod2....."); }
+
+   [TestCleanup]
+   public void TestCleanup() { Debug.Print("Running    TestCleanup"); }
+
+   [ClassCleanup]
+   public void ClassCleanup() { Debug.Print("Running ClassCleanup"); }
+}
