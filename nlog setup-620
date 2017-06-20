@@ -57,6 +57,7 @@ namespace mynamespace
   public class myclass
   {
     private static logger logger = logmanager.getcurrentclasslogger();
+     logger.Fatal("");
   }
 }
 
