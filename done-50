@@ -1,0 +1,1989 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Linq;
+using ASI.AB.Domain;
+using ASI.AB.Domain.Constants;
+using ASI.AB.Domain.Fields;
+using ASI.AB.Domain.Sections;
+using System.Net.Mail;
+using Docker.DotNet;
+using Docker.DotNet.Models;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NLog.Internal;
+using RestSharp;
+using SautinSoft.Document;
+using SautinSoft.Document.Drawing;
+using System.Drawing;
+using System.Diagnostics;
+using NLog;
+
+namespace ASI.AB.ApiTests
+{
+    [TestClass]
+    public class AgendaBuilderTests : TestHelper
+    {
+        public static new Logger Logger = LogManager.GetCurrentClassLogger();
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+
+            // retrieving IP address 
+             String currentPath = System.IO.Directory.GetParent(System.IO.Directory.GetParent(Environment.CurrentDirectory).ToString()).ToString();
+             String strContainerFile = System.IO.Directory.GetParent(currentPath).ToString() +
+                                      "\\Docker\\WebApp\\containerIp.txt";
+            
+            string ipAddress = GetIp(strContainerFile);
+
+            // path for storing images and template for testing
+            downLoadPath = currentPath + "\\Resourses\\Template";
+            imagePath = currentPath + "\\Resourses\\Image";
+
+            // setting the REST path for testing
+            restClient = new RestClient($"http://{ipAddress}/");          
+
+            restRequest = new RestRequest("agendabuilder/getagenda", Method.POST);
+
+        }
+        
+        [TestMethod]
+        //1. positive--MainTitle 
+        public void AB_CoverPage_With_MainTitle_Only()
+        {
+            Logger.Info("Starting test" + "-------------------------------------------");
+            // ARRANGE
+            restRequest.RequestFormat = DataFormat.Json;
+            // Test string
+            String strMaintitleExpected = "This is MainTitle";
+
+            // request 
+            var agenda = new Agenda
+            {
+                Sections = new List<SectionBase>
+                 {
+                     new SimpleSection
+                     {
+                         Fields = new List<FieldBase>
+                         {
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.MainTitle,
+                                 Content = strMaintitleExpected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#FFF660"
+                                 }
+                             }
+                         }
+                     }
+                 }
+            };
+
+            //serialize json
+            var json = restRequest.JsonSerializer.Serialize(agenda);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+            // ACT
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            byte[] response = restClient.DownloadData(restRequest);
+            File.WriteAllBytes(downLoadPath + "\\MainTitle.docx", response);
+
+            // retriving text from word based on location
+            String strMainTitleActual = GetDataFromWord(downLoadPath + "\\MainTitle.docx", 1).Trim();
+
+            // ASSERT
+            Assert.AreEqual(strMaintitleExpected, strMainTitleActual);
+        }
+
+
+        [TestMethod]
+        //2. positive--SubTitles
+        public void AB_CoverPage_With_SubTitles_Only()
+        {
+            Logger.Info("Starting test" + "-------------------------------------------");
+            // ARRANGE
+            restRequest.RequestFormat = DataFormat.Json;
+            // Test string
+            String strSubtitle1Expected = "This is SubTitle1";
+            String strSubtitle2Expected = "This is SubTitle2";
+
+            // using forming request
+            var agenda = new Agenda
+            {
+                Sections = new List<SectionBase>
+                 {
+                     new SimpleSection
+                     {
+                         Fields = new List<FieldBase>
+                         {
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.SubTitle1,
+                                 Content = strSubtitle1Expected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#FFF660"
+                                 }
+                             },
+
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.SubTitle2,
+                                 Content = strSubtitle2Expected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#FFF660"
+                                 }
+                             }
+                         }
+                     }
+                 }
+            };
+
+            //serialize json
+            var json = restRequest.JsonSerializer.Serialize(agenda);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+            // ACT
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            byte[] response = restClient.DownloadData(restRequest);           
+            File.WriteAllBytes(downLoadPath + "\\SubTitles.docx", response);
+
+            // retriving text from word based on location
+            String strSubtitle1Actual = GetDataFromWord(downLoadPath + "\\SubTitles.docx", 2).Trim();
+            String strSubtitle2Actual = GetDataFromWord(downLoadPath + "\\SubTitles.docx", 3).Trim();
+
+
+            // ASSERT
+            Assert.AreEqual(strSubtitle1Expected, strSubtitle1Actual);
+            Assert.AreEqual(strSubtitle2Expected, strSubtitle2Actual);
+
+        }
+
+        [TestMethod]
+        //3. positive--Titles
+        public void AB_CoverPage_With_Titles_Only()
+        {
+            Logger.Info("Starting test" + "-------------------------------------------");
+            // ARRANGE
+            restRequest.RequestFormat = DataFormat.Json;
+            // Test string
+            String strTitle1Expected = "This is Title1";
+            String strTitle2Expected = "This is Title2";
+
+            // using forming request
+            var agenda = new Agenda
+            {
+                Sections = new List<SectionBase>
+                 {
+                     new SimpleSection
+                     {
+                         Fields = new List<FieldBase>
+                         {
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.Title1,
+                                 Content = strTitle1Expected,
+                             },
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.Title2,
+                                 Content = strTitle2Expected
+                             }
+                         }
+                     }
+                 }
+            };
+
+            //serialize json
+            var json = restRequest.JsonSerializer.Serialize(agenda);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+            // ACT
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            byte[] response = restClient.DownloadData(restRequest);
+            File.WriteAllBytes(downLoadPath + "\\Titles.docx", response);
+
+            // retriving text from word based on location
+            String strTitle1Actual = GetDataFromWord(downLoadPath + "\\Titles.docx", 4).Trim();
+            String strTitle2Actual = GetDataFromWord(downLoadPath + "\\Titles.docx", 5).Trim();
+
+
+            // ASSERT
+            Assert.AreEqual(strTitle1Expected, strTitle1Actual);
+            Assert.AreEqual(strTitle2Expected, strTitle2Actual);
+
+        }
+
+        [TestMethod]
+        //4. positive--Texts
+        public void AB_CoverPage_With_Texts_Only()
+        {
+            Logger.Info("Starting test" + "-------------------------------------------");
+            // ARRANGE
+            restRequest.RequestFormat = DataFormat.Json;
+            // Test string
+            String strText1Expected = "This is Text1";
+            String strText2Expected = "This is Text2";
+            String strText3Expected = "This is Text3";
+
+            // using forming request
+            var agenda = new Agenda
+            {
+                Sections = new List<SectionBase>
+                 {
+                     new SimpleSection
+                     {
+                         Fields = new List<FieldBase>
+                         {
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.Text1,
+                                 Content = strText1Expected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#171917"
+                                 }
+                             },
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.Text2,
+                                 Content = strText2Expected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#00FF7F"
+                                 }
+                             },
+                             new TextField
+                             {
+                                Name = CoverSectionFieldNames.Text3,
+                                Content = strText3Expected,
+                                Font = new ASI.AB.Domain.Fields.Font
+                                {
+                                    Color = "#FF42225D"
+                                }
+                             }
+                         }
+                     }
+                 }
+            };
+
+            //serialize json
+            var json = restRequest.JsonSerializer.Serialize(agenda);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+            // ACT
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            byte[] response = restClient.DownloadData(restRequest);            
+            File.WriteAllBytes(downLoadPath + "\\Texts.docx", response);
+            
+            // retriving text from word based on location
+            String strText1Actual = GetDataFromWord(downLoadPath + "\\Texts.docx", 4).Trim();
+            String strText2Actual = GetDataFromWord(downLoadPath + "\\Texts.docx", 5).Trim();
+            String strText3Actual = GetDataFromWord(downLoadPath + "\\Texts.docx", 6).Trim();
+
+            // ASSERT
+            Assert.AreEqual(strText1Expected, strText1Actual);
+            Assert.AreEqual(strText2Expected, strText2Actual);
+            Assert.AreEqual(strText3Expected, strText3Actual);
+        }
+
+        [TestMethod]
+        //5. positive--Full section without Image
+        public void AB_AllSection_CoverPage_without_Images()
+        {
+            Logger.Info("Starting test" + "-------------------------------------------");
+            // ARRANGE
+            restRequest.RequestFormat = DataFormat.Json;
+            // Test string
+
+            String strMaintitleExpected = "This is a MainTitle";
+            String strSubtitle1Expected = "This is SubTitle1";
+            String strSubtitle2Expected = "This is SubTitle2";
+            String strTitle1Expected = "This is Title1";
+            String strTitle2Expected = "This is Title2";
+            String strText1Expected = "This is Text1";
+            String strText2Expected = "This is Text2";
+            String strText3Expected = "This is Text3";
+
+            // using forming request
+            var agenda = new Agenda
+            {
+                Sections = new List<SectionBase>
+                 {
+                     new SimpleSection
+                     {
+                         Fields = new List<FieldBase>
+                         {
+                             new TextField
+
+                             {
+                                 Name = CoverSectionFieldNames.MainTitle,
+                                 Content = strMaintitleExpected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#282525"
+                                 }
+                             },
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.SubTitle1,
+                                 Content = strSubtitle1Expected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#d83131"
+                                 }
+                             },
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.SubTitle2,
+                                 Content = strSubtitle2Expected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#2347d3"
+                                 }
+                             },
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.Title1,
+                                 Content = strTitle1Expected
+                             },
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.Title2,
+                                 Content = strTitle2Expected
+                             },
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.Text1,
+                                 Content = strText1Expected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#FFF660"
+                                 }
+                             },
+                             new TextField
+
+                             {
+                                 Name = CoverSectionFieldNames.Text2,
+                                 Content = strText2Expected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#00FF7F"
+                                 }
+                             },
+                             new TextField
+                             {
+                                Name = CoverSectionFieldNames.Text3,
+                                Content = strText3Expected,
+                                Font = new ASI.AB.Domain.Fields.Font
+                                {
+                                    Color = "#FF42225D"
+                                }
+                             }
+                         }
+                     }
+                 }
+            };
+
+            //serialize json
+            var json = restRequest.JsonSerializer.Serialize(agenda);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+            // ACT
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            byte[] response = restClient.DownloadData(restRequest);
+            File.WriteAllBytes(downLoadPath + "\\SectionwithoutImage.docx", response);
+
+            // retriving text from word based on location
+
+            String strMainTitleActual = GetDataFromWord(downLoadPath + "\\SectionwithoutImage.docx", 1).Trim();
+            String strSubtitle1Actual = GetDataFromWord(downLoadPath + "\\SectionwithoutImage.docx", 2).Trim();
+            String strSubtitle2Actual = GetDataFromWord(downLoadPath + "\\SectionwithoutImage.docx", 3).Trim();
+            String strTitle1Actual = GetDataFromWord(downLoadPath + "\\SectionwithoutImage.docx", 4).Trim();
+            String strTitle2Actual = GetDataFromWord(downLoadPath + "\\SectionwithoutImage.docx", 5).Trim();
+            String strText1Actual = GetDataFromWord(downLoadPath + "\\SectionwithoutImage.docx", 6).Trim();
+            String strText2Actual = GetDataFromWord(downLoadPath + "\\SectionwithoutImage.docx", 7).Trim();
+            String strText3Actual = GetDataFromWord(downLoadPath + "\\SectionwithoutImage.docx", 8).Trim();
+
+            // ASSERT
+            Assert.AreEqual(strMaintitleExpected, strMainTitleActual);
+            Assert.AreEqual(strSubtitle1Expected, strSubtitle1Actual);
+            Assert.AreEqual(strSubtitle2Expected, strSubtitle2Actual);
+            Assert.AreEqual(strTitle1Expected, strTitle1Actual);
+            Assert.AreEqual(strTitle2Expected, strTitle2Actual);
+            Assert.AreEqual(strText1Expected, strText1Actual);
+            Assert.AreEqual(strText2Expected, strText2Actual);
+            Assert.AreEqual(strText3Expected, strText3Actual);
+
+        }
+
+
+
+        [TestMethod]
+        //6. MainTitle >20 chracters
+        public void AB_CoverPage_With_MainTitle_20characters()
+        {
+            Logger.Info("Starting test" + "-------------------------------------------");
+            // ARRANGE
+            restRequest.RequestFormat = DataFormat.Json;
+            // Test string
+            String strMaintitleExpected = "This is MainTitle which is over 20 characters";
+
+            // using forming request
+            var agenda = new Agenda
+            {
+                Sections = new List<SectionBase>
+                 {
+                     new SimpleSection
+                     {
+                         Fields = new List<FieldBase>
+                         {
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.MainTitle,
+                                 Content = strMaintitleExpected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#FFF660"
+                                 }
+                             }
+                         }
+                     }
+                 }
+            };
+
+            //serialize json
+            var json = restRequest.JsonSerializer.Serialize(agenda);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+            // ACT
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            byte[] response = restClient.DownloadData(restRequest);
+            File.WriteAllBytes(downLoadPath + "\\MainTitle20.docx", response);
+            // retriving text from word based on location
+            String strMainTitleActual = GetDataFromWord(downLoadPath + "\\MainTitle20.docx", 1).Trim();
+
+
+            // ASSERT
+            Assert.AreEqual(strMaintitleExpected, strMainTitleActual);
+        }
+
+        [TestMethod]
+        //7. MainTitle with Special characters
+        public void AB_CoverPage_With_MainTitle_SpecialCharacter()
+        {
+            Logger.Info("Starting test" + "-------------------------------------------");
+            // ARRANGE
+            restRequest.RequestFormat = DataFormat.Json;
+            // Test string
+            String strMaintitleExpected = "!<@%&(©!~`-/";
+
+            // using forming request
+            var agenda = new Agenda
+            {
+                Sections = new List<SectionBase>
+                 {
+                     new SimpleSection
+                     {
+                         Fields = new List<FieldBase>
+                         {
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.MainTitle,
+                                 Content = strMaintitleExpected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#FFF660"
+                                 }
+                             }
+                         }
+                     }
+                 }
+            };
+
+            //serialize json
+            var json = restRequest.JsonSerializer.Serialize(agenda);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+            // ACT
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            byte[] response = restClient.DownloadData(restRequest);         
+            File.WriteAllBytes(downLoadPath + "\\MainTitle_SpecialCharacters.docx", response);
+            // retriving text from word based on location
+            String strMainTitleActual = GetDataFromWord(downLoadPath + "\\MainTitle_SpecialCharacters.docx", 1).Trim();
+
+            // ASSERT
+            Assert.AreEqual(strMaintitleExpected, strMainTitleActual);
+        }
+
+        [TestMethod]
+        //8. positive--Full section with Hyperlinks
+        public void AB_CoverPage_With_Hyperlinks()
+        {
+            Logger.Info("Starting test" + "-------------------------------------------");
+            // ARRANGE
+            restRequest.RequestFormat = DataFormat.Json;
+            // Test string
+
+            String strMaintitleExpected = "https://www.yellowribbonevents.org/Login.aspx";
+            String strSubtitle1Expected = "https://www.yellowribbonevents.org/Login.aspx";
+            String strSubtitle2Expected = "This is SubTitle2";
+            String strTitle1Expected = "https://www.yellowribbonevents.org/Login.aspx";
+            String strTitle2Expected = "This is Title2";
+            String strText1Expected = "https://www.yellowribbonevents.org/Login.aspx";
+            String strText2Expected = "This is Text2";
+            String strText3Expected = "This is Text3";
+
+            // using forming request
+            var agenda = new Agenda
+            {
+                Sections = new List<SectionBase>
+                 {
+                     new SimpleSection
+                     {
+                         Fields = new List<FieldBase>
+                         {
+                             new TextField
+
+                             {
+                                 Name = CoverSectionFieldNames.MainTitle,
+                                 Content = strMaintitleExpected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#FFF660"
+                                 }
+                             },
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.SubTitle1,
+                                 Content = strSubtitle1Expected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#FFF660"
+                                 }
+                             },
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.SubTitle2,
+                                 Content = strSubtitle2Expected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#FFF660"
+                                 }
+                             },
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.Title1,
+                                 Content = strTitle1Expected
+                             },
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.Title2,
+                                 Content = strTitle2Expected
+                             },
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.Text1,
+                                 Content = strText1Expected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#FFF660"
+                                 }
+                             },
+                             new TextField
+
+                             {
+                                 Name = CoverSectionFieldNames.Text2,
+                                 Content = strText2Expected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#00FF7F"
+                                 }
+                             },
+                             new TextField
+                             {
+                                Name = CoverSectionFieldNames.Text3,
+                                Content = strText3Expected,
+                                Font = new ASI.AB.Domain.Fields.Font
+                                {
+                                    Color = "#FF42225D"
+                                }
+                             }
+                         }
+                     }
+                 }
+            };
+
+            //serialize json
+            var json = restRequest.JsonSerializer.Serialize(agenda);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+            // ACT
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            byte[] response = restClient.DownloadData(restRequest);
+
+            File.WriteAllBytes(downLoadPath + "\\SectionwithoutImage.docx", response);
+
+            // retriving text from word based on location
+
+            String strMainTitleActual = GetDataFromWord(downLoadPath + "\\SectionwithoutImage.docx", 1).Trim();
+            String strSubtitle1Actual = GetDataFromWord(downLoadPath + "\\SectionwithoutImage.docx", 2).Trim();
+            String strSubtitle2Actual = GetDataFromWord(downLoadPath + "\\SectionwithoutImage.docx", 3).Trim();
+            String strTitle1Actual = GetDataFromWord(downLoadPath + "\\SectionwithoutImage.docx", 4).Trim();
+            String strTitle2Actual = GetDataFromWord(downLoadPath + "\\SectionwithoutImage.docx", 5).Trim();
+            String strText1Actual = GetDataFromWord(downLoadPath + "\\SectionwithoutImage.docx", 6).Trim();
+            String strText2Actual = GetDataFromWord(downLoadPath + "\\SectionwithoutImage.docx", 7).Trim();
+            String strText3Actual = GetDataFromWord(downLoadPath + "\\SectionwithoutImage.docx", 8).Trim();
+
+            // ASSERT
+            Assert.AreEqual(strMaintitleExpected, strMainTitleActual);
+            Assert.AreEqual(strSubtitle1Expected, strSubtitle1Actual);
+            Assert.AreEqual(strSubtitle2Expected, strSubtitle2Actual);
+            Assert.AreEqual(strTitle1Expected, strTitle1Actual);
+            Assert.AreEqual(strTitle2Expected, strTitle2Actual);
+            Assert.AreEqual(strText1Expected, strText1Actual);
+            Assert.AreEqual(strText2Expected, strText2Actual);
+            Assert.AreEqual(strText3Expected, strText3Actual);
+
+        }
+
+        [TestMethod]
+        //9. MainTitle with Upper&Lower case
+        public void AB_CoverPage_With_MainTitle_UpperLowerCase()
+        {
+            Logger.Info("Starting test" + "-------------------------------------------");
+            // ARRANGE
+            restRequest.RequestFormat = DataFormat.Json;
+            // Test string
+            String strMaintitleExpected = "tHis IS MaIn TItlE-mIXed WiTh uPPeR AnD LoWER cASE";
+
+            // using forming request
+            var agenda = new Agenda
+            {
+                Sections = new List<SectionBase>
+                 {
+                     new SimpleSection
+                     {
+                         Fields = new List<FieldBase>
+                         {
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.MainTitle,
+                                 Content = strMaintitleExpected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#FFF660"
+                                 }
+                             }
+                         }
+                     }
+                 }
+            };
+
+            //serialize json
+            var json = restRequest.JsonSerializer.Serialize(agenda);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+            // ACT
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            byte[] response = restClient.DownloadData(restRequest);
+           
+            File.WriteAllBytes(downLoadPath + "\\MainTitle_UpperLower.docx", response);
+            // retriving text from word based on location
+            String strMainTitleActual = GetDataFromWord(downLoadPath + "\\MainTitle_UpperLower.docx", 1).Trim();
+
+            // ASSERT
+            Assert.AreEqual(strMaintitleExpected, strMainTitleActual);
+        }
+
+        [TestMethod]
+        //10. MainTitle with html tags
+        public void AB_CoverPage_With_htmltags()
+        {
+            Logger.Info("Starting test" + "-------------------------------------------");
+            // ARRANGE
+            restRequest.RequestFormat = DataFormat.Json;
+            // Test string
+
+            String strMaintitleExpected = "<i>The lightning</i>";
+            String strSubtitle1Expected = "<title>SubTitle of the document</title>";
+
+
+            // using forming request
+            var agenda = new Agenda
+            {
+                Sections = new List<SectionBase>
+                 {
+                     new SimpleSection
+                     {
+                         Fields = new List<FieldBase>
+                         {
+                             new TextField
+
+                             {
+                                 Name = CoverSectionFieldNames.MainTitle,
+                                 Content = strMaintitleExpected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#FFF660"
+                                 }
+                             },
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.SubTitle1,
+                                 Content = strSubtitle1Expected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#FFF660"
+                                 }
+                             }
+                         }
+                     }
+                 }
+            };
+
+            //serialize json
+            var json = restRequest.JsonSerializer.Serialize(agenda);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+            // ACT
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            byte[] response = restClient.DownloadData(restRequest);
+            File.WriteAllBytes(downLoadPath + "\\htlmtags.docx", response);
+
+            // retriving text from word based on location
+
+            String strMainTitleActual = GetDataFromWord(downLoadPath + "\\htlmtags.docx", 1).Trim();
+            String strSubtitle1Actual = GetDataFromWord(downLoadPath + "\\htlmtags.docx", 2).Trim();
+            String strText1Actual = GetDataFromWord(downLoadPath + "\\htlmtags.docx", 6).Trim();
+
+
+            // ASSERT
+            Assert.AreEqual(strMaintitleExpected, strMainTitleActual);
+            Assert.AreEqual(strSubtitle1Expected, strSubtitle1Actual);
+
+
+        }
+
+        [TestMethod]
+        //11. MainTitle with space
+        public void AB_CoverPage_With_space()
+        {
+            Logger.Info("Starting test" + "-------------------------------------------");
+            // ARRANGE
+            restRequest.RequestFormat = DataFormat.Json;
+
+            // Test string
+            String strMaintitleExpected = "bi lin gual";
+            String strSubtitle1Expected = "neighbor h ood";
+            String strText1Expected = "Mid -  Aut umn   Festival";
+
+            // using forming request
+            var agenda = new Agenda
+            {
+                Sections = new List<SectionBase>
+                 {
+                     new SimpleSection
+                     {
+                         Fields = new List<FieldBase>
+                         {
+                             new TextField
+
+                             {
+                                 Name = CoverSectionFieldNames.MainTitle,
+                                 Content = strMaintitleExpected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#FFF660"
+                                 }
+                             },
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.SubTitle1,
+                                 Content = strSubtitle1Expected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#185dcc"
+                                 }
+                             },
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.Text1,
+                                 Content = strText1Expected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#dd411a"
+                                 }
+                             }
+                         }
+                     }
+                 }
+            };
+
+            //serialize json
+            var json = restRequest.JsonSerializer.Serialize(agenda);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+            // ACT
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            byte[] response = restClient.DownloadData(restRequest);
+            File.WriteAllBytes(downLoadPath + "\\WithSpace.docx", response);
+
+            // retriving text from word based on location
+
+            String strMainTitleActual = GetDataFromWord(downLoadPath + "\\WithSpace.docx", 1).Trim();
+            String strSubtitle1Actual = GetDataFromWord(downLoadPath + "\\WithSpace.docx", 2).Trim();
+            String strText1Actual = GetDataFromWord(downLoadPath + "\\WithSpace.docx", 4).Trim();
+
+
+            // ASSERT
+            Assert.AreEqual(strMaintitleExpected, strMainTitleActual);
+            Assert.AreEqual(strSubtitle1Expected, strSubtitle1Actual);
+            Assert.AreEqual(strText1Expected, strText1Actual);
+
+
+        }
+
+        [TestMethod]
+        //12. positive--Full section Color&Size
+        public void AB_CoverPage_FullSectioin_withouimages_Color_size()
+        {
+            Logger.Info("Starting test" + "-------------------------------------------");
+            // ARRANGE
+            restRequest.RequestFormat = DataFormat.Json;
+            // Test string
+
+            String strMaintitleExpected = "This is a MainTitle";
+            String strSubtitle1Expected = "This is SubTitle1";
+            String strSubtitle2Expected = "This is SubTitle2";
+            String strTitle1Expected = "This is Title1";
+            String strTitle2Expected = "This is Title2";
+            String strText1Expected = "This is Text1";
+            String strText2Expected = "This is Text2";
+            String strText3Expected = "This is Text3";
+
+            // using forming request
+            var agenda = new Agenda
+            {
+                Sections = new List<SectionBase>
+                 {
+                     new SimpleSection
+                     {
+                         Fields = new List<FieldBase>
+                         {
+                             new TextField
+
+                             {
+                                 Name = CoverSectionFieldNames.MainTitle,
+                                 Content = strMaintitleExpected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 { //black
+                                     Color = "#212621"
+                                 }
+                             },
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.SubTitle1,
+                                 Content = strSubtitle1Expected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {//green
+                                     Size = 20,
+                                     Color = "#27b227"
+                                 }
+                             },
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.SubTitle2,
+                                 Content = strSubtitle2Expected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 { //pink
+                                     Color = "#f9b8f2"
+                                 }
+                             },
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.Title1,
+                                 Content = strTitle1Expected,
+                             },
+
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.Title2,
+                                 Content = strTitle2Expected
+                             },
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.Text1,
+                                 Content = strText1Expected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {//purple
+                                     Size = 16,
+                                     Color = "#8c027d"
+                                 }
+                             },
+                             new TextField
+
+                             {
+                                 Name = CoverSectionFieldNames.Text2,
+                                 Content = strText2Expected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {//yellow
+                                     Color = "#dbd827"
+                                 }
+                             },
+                             new TextField
+                             {
+                                Name = CoverSectionFieldNames.Text3,
+                                Content = strText3Expected,
+                                Font = new ASI.AB.Domain.Fields.Font
+                                {//grey
+                                    Color = "#bcbcb8"
+                                }
+                             }
+                         }
+                     }
+                 }
+            };
+
+            //serialize json
+            var json = restRequest.JsonSerializer.Serialize(agenda);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+            // ACT
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            byte[] response = restClient.DownloadData(restRequest);
+
+            File.WriteAllBytes(downLoadPath + "\\ColorandSize.docx", response);
+
+            // retriving text from word based on location
+
+            String strMainTitleActual = GetDataFromWord(downLoadPath + "\\ColorandSize.docx", 1).Trim();
+            String strSubtitle1Actual = GetDataFromWord(downLoadPath + "\\ColorandSize.docx", 2).Trim();
+            String strSubtitle2Actual = GetDataFromWord(downLoadPath + "\\ColorandSize.docx", 3).Trim();
+            String strTitle1Actual = GetDataFromWord(downLoadPath + "\\ColorandSize.docx", 4).Trim();
+            String strTitle2Actual = GetDataFromWord(downLoadPath + "\\ColorandSize.docx", 5).Trim();
+            String strText1Actual = GetDataFromWord(downLoadPath + "\\ColorandSize.docx", 6).Trim();
+            String strText2Actual = GetDataFromWord(downLoadPath + "\\ColorandSize.docx", 7).Trim();
+            String strText3Actual = GetDataFromWord(downLoadPath + "\\ColorandSize.docx", 8).Trim();
+
+            // ASSERT
+            Assert.AreEqual(strMaintitleExpected, strMainTitleActual);
+            Assert.AreEqual(strSubtitle1Expected, strSubtitle1Actual);
+            Assert.AreEqual(strSubtitle2Expected, strSubtitle2Actual);
+            Assert.AreEqual(strTitle1Expected, strTitle1Actual);
+            Assert.AreEqual(strTitle2Expected, strTitle2Actual);
+            Assert.AreEqual(strText1Expected, strText1Actual);
+            Assert.AreEqual(strText2Expected, strText2Actual);
+            Assert.AreEqual(strText3Expected, strText3Actual);
+
+        }
+
+        
+        //Images
+        [TestMethod] 
+        //13. MainImage1 jpg
+        public void AB_CoverPage_With_MainImage_jpg()
+        {
+
+
+            Logger.Info("Starting test" + "-------------------------------------------");
+            // ARRANGE
+            restRequest.RequestFormat = DataFormat.Json;
+
+           
+        // using forming request
+        var agenda = new Agenda
+            {
+                Sections = new List<SectionBase>
+                {
+                    new SimpleSection
+                    {
+                        Fields = new List<FieldBase>
+                        {
+                            new ImageField
+                            {
+                                Name = CoverSectionFieldNames.MainImage,
+                                Content = ReadImageFile(imagePath +"\\coverPage.jpg")
+                            }
+
+                        }
+                    }
+                }
+            };
+
+            //serialize json
+            var json = restRequest.JsonSerializer.Serialize(agenda);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+            // ACT
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            byte[] response = restClient.DownloadData(restRequest);
+            File.WriteAllBytes(downLoadPath + "\\MainImage_jpg.docx", response);
+
+
+            // retriving images from word based on location 
+
+            string filePath = downLoadPath + "\\MainImage_jpg.docx";
+
+            DirectoryInfo imageDir = new DirectoryInfo(Path.GetDirectoryName(filePath));
+            string imageTemplate = "picture";
+            List<ImageData> imageInventory = new List<ImageData>();
+            DocumentCore dc = DocumentCore.Load(filePath);
+
+
+            // Extract all images from document 
+            foreach (DrawingElement de in dc.Document.GetChildElements(true, ElementType.DrawingElement))
+            {
+                if (de.Shape.ShapeType == ShapeType.Picture)
+                {
+                    Picture pict = (Picture)de.Shape;
+                    imageInventory.Add(pict.ImageData);
+                }
+            }
+
+            // Save all images 
+           
+
+            for (int i = 0; i < imageInventory.Count; i++)
+            {
+                string targetPath = Path.Combine(imageDir.FullName, String.Format("{0}{1}.{2}", imageTemplate, i + 1, imageInventory[i].Format.ToString().ToLower()));
+                File.WriteAllBytes(targetPath, imageInventory[i].ImageStream.ToArray());
+            }
+
+
+            // compare two images
+
+            var InputImage = new Bitmap(imagePath + "\\coverPage.jpg");
+            var OutputImage = new Bitmap(downLoadPath + "\\picture1.jpeg");
+
+            
+            //assert result
+            var result = ImageCompareArray(InputImage, OutputImage);
+
+            Assert.IsTrue(result);
+
+        }
+        
+
+        [TestMethod]
+        //14. MainImage2_gif
+        public void AB_CoverPage_With_MainImage_gif()
+        {
+            Logger.Info("Starting test" + "-------------------------------------------");
+            // ARRANGE
+            restRequest.RequestFormat = DataFormat.Json;
+
+
+            // using forming request
+            var agenda = new Agenda
+            {
+                Sections = new List<SectionBase>
+                {
+                    new SimpleSection
+                    {
+                        Fields = new List<FieldBase>
+                        {
+                            new ImageField
+                            {
+                                Name = CoverSectionFieldNames.MainImage,
+                                Content = ReadImageFile(imagePath + "\\coverPage.gif")
+                            }
+
+                        }
+                    }
+                }
+            };
+
+            //serialize json
+            var json = restRequest.JsonSerializer.Serialize(agenda);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+            // ACT
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            byte[] response = restClient.DownloadData(restRequest);
+
+            File.WriteAllBytes(downLoadPath + "\\MainImage_gif.docx", response);
+
+
+            // retriving images from word based on location 
+
+            string filePath = downLoadPath + "\\MainImage_gif.docx";
+
+
+            DirectoryInfo imageDir = new DirectoryInfo(Path.GetDirectoryName(filePath));
+            string imageTemplate = "picture";
+            List<ImageData> imageInventory = new List<ImageData>();
+
+            DocumentCore dc = DocumentCore.Load(filePath);
+
+
+            // Extract all images from document 
+            foreach (DrawingElement de in dc.Document.GetChildElements(true, ElementType.DrawingElement))
+            {
+                if (de.Shape.ShapeType == ShapeType.Picture)
+                {
+                    Picture pict = (Picture)de.Shape;
+                    imageInventory.Add(pict.ImageData);
+                }
+            }
+
+            // Save all images 
+            for (int i = 0; i < imageInventory.Count; i++)
+            {
+                string targetPath = Path.Combine(imageDir.FullName, String.Format("{0}{1}.{2}", imageTemplate, count +1, imageInventory[i].Format.ToString().ToLower()));
+                File.WriteAllBytes(targetPath, imageInventory[i].ImageStream.ToArray());
+            }
+
+
+            // compare two images
+
+            var InputImage = new Bitmap(imagePath + "\\coverPage.gif");
+            var OutputImage = new Bitmap(downLoadPath + "\\picture2.jpeg");
+
+            //var result
+            var result = ImageCompareArray(InputImage, OutputImage);
+
+            Assert.IsTrue(result);
+
+        }
+
+        [TestMethod]
+        //15. MainImage3_bmp
+        public void AB_CoverPage_With_MainImage_bmp()
+        {
+            Logger.Info("Starting test" + "-------------------------------------------");
+            // ARRANGE
+            restRequest.RequestFormat = DataFormat.Json;
+
+            // using forming request
+            var agenda = new Agenda
+            {
+                Sections = new List<SectionBase>
+                {
+                    new SimpleSection
+                    {
+                        Fields = new List<FieldBase>
+                        {
+                            new ImageField
+                            {
+                                Name = CoverSectionFieldNames.MainImage,
+                                Content = ReadImageFile(imagePath + "\\coverPage.bmp")
+                            }
+
+                        }
+                    }
+                }
+            };
+
+            //serialize json
+            var json = restRequest.JsonSerializer.Serialize(agenda);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+            // ACT
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            byte[] response = restClient.DownloadData(restRequest);
+
+            File.WriteAllBytes(downLoadPath + "\\MainImage_bmp.docx", response);
+
+
+            // retriving images from word based on location 
+
+            string filePath = downLoadPath + "\\MainImage_bmp.docx";
+
+
+            DirectoryInfo imageDir = new DirectoryInfo(Path.GetDirectoryName(filePath));
+            string imageTemplate = "picture";
+            List<ImageData> imageInventory = new List<ImageData>();
+
+            DocumentCore dc = DocumentCore.Load(filePath);
+
+
+            // Extract all images from document 
+            foreach (DrawingElement de in dc.Document.GetChildElements(true, ElementType.DrawingElement))
+            {
+                if (de.Shape.ShapeType == ShapeType.Picture)
+                {
+                    Picture pict = (Picture)de.Shape;
+                    imageInventory.Add(pict.ImageData);
+                }
+            }
+
+            // Save all images 
+            for (int i = 0; i < imageInventory.Count; i++)
+            {
+                string targetPath = Path.Combine(imageDir.FullName, String.Format("{0}{1}.{2}", imageTemplate, count + 2, imageInventory[i].Format.ToString().ToLower()));
+                File.WriteAllBytes(targetPath, imageInventory[i].ImageStream.ToArray());
+            }
+
+            // compare two images
+            var InputImage = new Bitmap(imagePath + "\\coverPage.bmp");
+            var OutputImage = new Bitmap(downLoadPath + "\\picture3.jpeg");
+
+            //var result
+            var result = ImageCompareArray(InputImage, OutputImage);
+
+            Assert.IsTrue(result);
+
+        }
+
+        [TestMethod]
+        //16. MainImage4_png
+        public void AB_CoverPage_With_MainImage_png()
+        {
+            Logger.Info("Starting test" + "-------------------------------------------");
+            // ARRANGE
+            restRequest.RequestFormat = DataFormat.Json;
+
+            // using forming request
+            var agenda = new Agenda
+            {
+                Sections = new List<SectionBase>
+                {
+                    new SimpleSection
+                    {
+                        Fields = new List<FieldBase>
+                        {
+                            new ImageField
+                            {
+                                Name = CoverSectionFieldNames.MainImage,
+                                Content = ReadImageFile(imagePath + "\\coverPage.png")
+                            }
+
+                        }
+                    }
+                }
+            };
+
+            //serialize json
+            var json = restRequest.JsonSerializer.Serialize(agenda);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+            // ACT
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            byte[] response = restClient.DownloadData(restRequest);
+            File.WriteAllBytes(downLoadPath + "\\MainImage_png.docx", response);
+
+
+            // retriving images from word based on location 
+
+            string filePath = downLoadPath + "\\MainImage_png.docx";
+
+            DirectoryInfo imageDir = new DirectoryInfo(Path.GetDirectoryName(filePath));
+            string imageTemplate = "picture";
+            List<ImageData> imageInventory = new List<ImageData>();
+
+            DocumentCore dc = DocumentCore.Load(filePath);
+
+
+            // Extract all images from document 
+            foreach (DrawingElement de in dc.Document.GetChildElements(true, ElementType.DrawingElement))
+            {
+                if (de.Shape.ShapeType == ShapeType.Picture)
+                {
+                    Picture pict = (Picture)de.Shape;
+                    imageInventory.Add(pict.ImageData);
+                }
+            }
+
+            // Save all images 
+            for (int i = 0; i < imageInventory.Count; i++)
+            {
+                string targetPath = Path.Combine(imageDir.FullName, String.Format("{0}{1}.{2}", imageTemplate, count + 3, imageInventory[i].Format.ToString().ToLower()));
+                File.WriteAllBytes(targetPath, imageInventory[i].ImageStream.ToArray());
+            }
+
+            // compare two images
+            var InputImage = new Bitmap(imagePath + "\\coverPage.png");
+            var OutputImage = new Bitmap(downLoadPath + "\\picture4.jpeg");
+
+            //var result
+            var result = ImageCompareArray(InputImage, OutputImage);
+
+            Assert.IsTrue(result);
+
+        }
+
+
+        //17. SubImage5_jpg
+        [TestMethod]
+        public void AB_CoverPage_With_SubImage_jpg()
+        {
+            Logger.Info("Starting test" + "-------------------------------------------");
+            // ARRANGE
+            restRequest.RequestFormat = DataFormat.Json;
+
+            // using forming request
+            var agenda = new Agenda
+            {
+                Sections = new List<SectionBase>
+                {
+                    new SimpleSection
+                    {
+                        Fields = new List<FieldBase>
+                        {
+                            new ImageField
+                            {
+                                Name = CoverSectionFieldNames.SubImage,
+                                Content = ReadImageFile(imagePath + "\\AFR_logo.jpg")
+                            }
+
+                        }
+                    }
+                }
+            };
+
+            //serialize json
+            var json = restRequest.JsonSerializer.Serialize(agenda);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+            // ACT
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            byte[] response = restClient.DownloadData(restRequest);
+
+            File.WriteAllBytes(downLoadPath + "\\SubImage_jpg.docx", response);//var responsecode = restResponse.ResponseStatus;
+
+
+            // retriving images from word based on location 
+
+            string filePath = downLoadPath + "\\SubImage_jpg.docx";
+
+
+            DirectoryInfo imageDir = new DirectoryInfo(Path.GetDirectoryName(filePath));
+            string imageTemplate = "picture";
+            List<ImageData> imageInventory = new List<ImageData>();
+
+            DocumentCore dc = DocumentCore.Load(filePath);
+
+
+            // Extract all images from document 
+            foreach (DrawingElement de in dc.Document.GetChildElements(true, ElementType.DrawingElement))
+            {
+                if (de.Shape.ShapeType == ShapeType.Picture)
+                {
+                    Picture pict = (Picture)de.Shape;
+                    imageInventory.Add(pict.ImageData);
+                }
+            }
+
+            // Save all images 
+            for (int i = 0; i < imageInventory.Count; i++)
+            {
+                string targetPath = Path.Combine(imageDir.FullName, String.Format("{0}{1}.{2}", imageTemplate, count + 4, imageInventory[i].Format.ToString().ToLower()));
+                File.WriteAllBytes(targetPath, imageInventory[i].ImageStream.ToArray());
+            }
+
+            // compare two images
+            var InputImage = new Bitmap(imagePath + "\\AFR_logo.jpg");
+            var OutputImage = new Bitmap(downLoadPath + "\\picture5.png");
+
+            //var result 
+            var result = ImageCompareArray(InputImage, OutputImage);
+            Assert.IsTrue(result);
+
+        }
+        //18. SubImage6_png
+        [TestMethod]
+        public void AB_CoverPage_With_SubImage_gif()
+        {
+            Logger.Info("Starting test" + "-------------------------------------------");
+            // ARRANGE
+            restRequest.RequestFormat = DataFormat.Json;
+
+            // using forming request
+            var agenda = new Agenda
+            {
+                Sections = new List<SectionBase>
+                {
+                    new SimpleSection
+                    {
+                        Fields = new List<FieldBase>
+                        {
+                            new ImageField
+                            {
+                                Name = CoverSectionFieldNames.SubImage,
+                                Content = ReadImageFile(imagePath + "\\AFR_logo.gif")
+                            }
+
+
+                        }
+                    }
+                }
+            };
+
+            //serialize json
+            var json = restRequest.JsonSerializer.Serialize(agenda);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+
+// ACT
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            byte[] response = restClient.DownloadData(restRequest);
+            File.WriteAllBytes(downLoadPath + @"\SubImage_gif.docx", response);
+
+            // retriving images from word based on location 
+
+            string filePath = downLoadPath + @"\SubImage_gif.docx";
+
+
+            DirectoryInfo imageDir = new DirectoryInfo(Path.GetDirectoryName(filePath));
+            string imageTemplate = "picture";
+            List<ImageData> imageInventory = new List<ImageData>();
+
+            DocumentCore dc = DocumentCore.Load(filePath);
+
+
+            // Extract all images from document 
+            foreach (DrawingElement de in dc.Document.GetChildElements(true, ElementType.DrawingElement))
+            {
+                if (de.Shape.ShapeType == ShapeType.Picture)
+                {
+                    Picture pict = (Picture)de.Shape;
+                    imageInventory.Add(pict.ImageData);
+                }
+            }
+
+            // Save all images 
+            for (int i = 0; i < imageInventory.Count; i++)
+            {
+                string targetPath = Path.Combine(imageDir.FullName, String.Format("{0}{1}.{2}", imageTemplate, count + 5, imageInventory[i].Format.ToString().ToLower()));
+                File.WriteAllBytes(targetPath, imageInventory[i].ImageStream.ToArray());
+            }
+
+            // compare two images
+            var InputImage = new Bitmap(imagePath + "\\AFR_logo.gif");
+            var OutputImage = new Bitmap(downLoadPath + "\\picture6.png");
+
+            //var result
+            var result = ImageCompareArray(InputImage, OutputImage);
+
+            Assert.IsTrue(result);
+
+        }
+
+        //19. SubImage7_bmp
+        [TestMethod]
+        public void AB_CoverPage_With_SubImage_bmp()
+        {
+            Logger.Info("Starting test" + "-------------------------------------------");
+            // ARRANGE
+            restRequest.RequestFormat = DataFormat.Json;
+
+            // using forming request
+            var agenda = new Agenda
+            {
+                Sections = new List<SectionBase>
+                {
+                    new SimpleSection
+                    {
+                        Fields = new List<FieldBase>
+                        {
+                            new ImageField
+                            {
+                                Name = CoverSectionFieldNames.SubImage,
+                                Content = ReadImageFile(imagePath + "\\AFR_logo.bmp")
+                            }
+
+                        }
+                    }
+                }
+            };
+
+            //serialize json
+            var json = restRequest.JsonSerializer.Serialize(agenda);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+            // ACT
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            byte[] response = restClient.DownloadData(restRequest);
+            File.WriteAllBytes(downLoadPath + "\\SubImage_bmp.docx", response);//var responsecode = restResponse.ResponseStatus;
+
+
+            // retriving images from word based on location 
+
+            string filePath = downLoadPath + "\\SubImage_bmp.docx";
+
+
+            DirectoryInfo imageDir = new DirectoryInfo(Path.GetDirectoryName(filePath));
+            string imageTemplate = "picture";
+            List<ImageData> imageInventory = new List<ImageData>();
+
+            DocumentCore dc = DocumentCore.Load(filePath);
+
+
+            // Extract all images from document 
+            foreach (DrawingElement de in dc.Document.GetChildElements(true, ElementType.DrawingElement))
+            {
+                if (de.Shape.ShapeType == ShapeType.Picture)
+                {
+                    Picture pict = (Picture)de.Shape;
+                    imageInventory.Add(pict.ImageData);
+                }
+            }
+
+            // Save all images 
+            for (int i = 0; i < imageInventory.Count; i++)
+            {
+                string targetPath = Path.Combine(imageDir.FullName, String.Format("{0}{1}.{2}", imageTemplate, count + 6, imageInventory[i].Format.ToString().ToLower()));
+                File.WriteAllBytes(targetPath, imageInventory[i].ImageStream.ToArray());
+            }
+
+            // compare two images
+            var InputImage = new Bitmap(imagePath + "\\AFR_logo.bmp");
+            var OutputImage = new Bitmap(downLoadPath + "\\picture7.png");
+
+            // assert
+            var result = ImageCompareArray(InputImage, OutputImage);
+            Assert.IsTrue(result);
+
+        }
+
+        //20. 8.SubImage8 png
+        [TestMethod]
+        public void AB_CoverPage_With_SubImage_png()
+        {
+            Logger.Info("Starting test" + "-------------------------------------------");
+            // ARRANGE
+            restRequest.RequestFormat = DataFormat.Json;
+
+            // using forming request
+            var agenda = new Agenda
+            {
+                Sections = new List<SectionBase>
+                {
+                    new SimpleSection
+                    {
+                        Fields = new List<FieldBase>
+                        {
+                            new ImageField
+                            {
+                                Name = CoverSectionFieldNames.SubImage,
+                                Content = ReadImageFile(imagePath + "\\AFR_logo.png")
+                            }
+
+                        }
+                    }
+                }
+            };
+
+            //serialize json
+            var json = restRequest.JsonSerializer.Serialize(agenda);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+            // ACT
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            byte[] response = restClient.DownloadData(restRequest);
+            File.WriteAllBytes(downLoadPath + "\\SubImage_png.docx", response);
+
+            // retriving images from word based on location 
+            string filePath = downLoadPath + "\\SubImage_png.docx";
+
+            DirectoryInfo imageDir = new DirectoryInfo(Path.GetDirectoryName(filePath));
+            string imageTemplate = "picture";
+            List<ImageData> imageInventory = new List<ImageData>();
+
+            DocumentCore dc = DocumentCore.Load(filePath);
+
+
+            // Extract all images from document 
+            foreach (DrawingElement de in dc.Document.GetChildElements(true, ElementType.DrawingElement))
+            {
+                if (de.Shape.ShapeType == ShapeType.Picture)
+                {
+                    Picture pict = (Picture)de.Shape;
+                    imageInventory.Add(pict.ImageData);
+                }
+            }
+
+            // Save all images 
+            for (int i = 0; i < imageInventory.Count; i++)
+            {
+                string targetPath = Path.Combine(imageDir.FullName, String.Format("{0}{1}.{2}", imageTemplate, count + 7, imageInventory[i].Format.ToString().ToLower()));
+                File.WriteAllBytes(targetPath, imageInventory[i].ImageStream.ToArray());
+            }
+
+            // compare two images 
+
+            var InputImage = new Bitmap(imagePath + "\\AFR_logo.png");
+            var OutputImage = new Bitmap(downLoadPath + "\\picture8.png");
+
+            //assert result 
+            var result = ImageCompareArray(InputImage, OutputImage);
+            Assert.IsTrue(result);
+
+        }
+
+
+        [TestMethod]
+        //21. positive--Full section Image
+        public void AB_CoverPage_FullSection_with_Images()
+        {
+            Logger.Info("Starting test" + "-------------------------------------------");
+            // ARRANGE
+            restRequest.RequestFormat = DataFormat.Json;
+            // Test string
+
+            String strMaintitleExpected = "This is a MainTitle";
+            String strSubtitle1Expected = "This is SubTitle1";
+            String strSubtitle2Expected = "This is SubTitle2";
+            String strTitle1Expected = "This is Title1";
+            String strTitle2Expected = "This is Title2";
+            String strText1Expected = "This is Text1";
+            String strText2Expected = "This is Text2";
+            String strText3Expected = "This is Text3";
+
+            // using forming request
+            var agenda = new Agenda
+            {
+                Sections = new List<SectionBase>
+                 {
+                     new SimpleSection
+                     {
+                         Fields = new List<FieldBase>
+                         {
+                             new ImageField
+                            {
+                                Name = CoverSectionFieldNames.MainImage,
+                                 Content = ReadImageFile(imagePath +"\\coverPage.jpg")
+                            },
+                             new ImageField
+                            {
+                                Name = CoverSectionFieldNames.SubImage,
+                                 Content = ReadImageFile(imagePath +"\\AFR_logo.jpg")
+                            },
+                             new TextField
+
+                             {
+                                 Name = CoverSectionFieldNames.MainTitle,
+                                 Content = strMaintitleExpected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#282525"
+                                 }
+                             },
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.SubTitle1,
+                                 Content = strSubtitle1Expected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#d83131"
+                                 }
+                             },
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.SubTitle2,
+                                 Content = strSubtitle2Expected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#2347d3"
+                                 }
+                             },
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.Title1,
+                                 Content = strTitle1Expected
+                             },
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.Title2,
+                                 Content = strTitle2Expected
+                             },
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.Text1,
+                                 Content = strText1Expected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#FFF660"
+                                 }
+                             },
+                             new TextField
+
+                             {
+                                 Name = CoverSectionFieldNames.Text2,
+                                 Content = strText2Expected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#00FF7F"
+                                 }
+                             },
+                             new TextField
+                             {
+                                Name = CoverSectionFieldNames.Text3,
+                                Content = strText3Expected,
+                                Font = new ASI.AB.Domain.Fields.Font
+                                {
+                                    Color = "#FF42225D"
+                                }
+                             }
+                         }
+                     }
+                 }
+            };
+
+            //serialize json
+            var json = restRequest.JsonSerializer.Serialize(agenda);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+            // ACT
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            byte[] response = restClient.DownloadData(restRequest);
+            File.WriteAllBytes(downLoadPath + "\\FullCoverPage.docx", response);
+
+            // retriving text from word based on location
+
+            String strMainTitleActual = GetDataFromWord(downLoadPath + "\\FullCoverPage.docx", 1).Trim();
+            String strSubtitle1Actual = GetDataFromWord(downLoadPath + "\\FullCoverPage.docx", 2).Trim();
+            String strSubtitle2Actual = GetDataFromWord(downLoadPath + "\\FullCoverPage.docx", 3).Trim();
+            String strTitle1Actual = GetDataFromWord(downLoadPath + "\\FullCoverPage.docx", 4).Trim();
+            String strTitle2Actual = GetDataFromWord(downLoadPath + "\\FullCoverPage.docx", 5).Trim();
+            String strText1Actual = GetDataFromWord(downLoadPath + "\\FullCoverPage.docx", 6).Trim();
+            String strText2Actual = GetDataFromWord(downLoadPath + "\\FullCoverPage.docx", 7).Trim();
+            String strText3Actual = GetDataFromWord(downLoadPath + "\\FullCoverPage.docx", 8).Trim();
+
+            // ASSERT
+            Assert.AreEqual(strMaintitleExpected, strMainTitleActual);
+            Assert.AreEqual(strSubtitle1Expected, strSubtitle1Actual);
+            Assert.AreEqual(strSubtitle2Expected, strSubtitle2Actual);
+            Assert.AreEqual(strTitle1Expected, strTitle1Actual);
+            Assert.AreEqual(strTitle2Expected, strTitle2Actual);
+            Assert.AreEqual(strText1Expected, strText1Actual);
+            Assert.AreEqual(strText2Expected, strText2Actual);
+            Assert.AreEqual(strText3Expected, strText3Actual);
+
+            string filePath = downLoadPath + "\\FullCoverPage.docx";
+
+            DirectoryInfo imageDir = new DirectoryInfo(Path.GetDirectoryName(filePath));
+            string imageTemplate = "picture";
+            List<ImageData> imageInventory = new List<ImageData>();
+
+            DocumentCore dc = DocumentCore.Load(filePath);
+
+            // Extract all images from document 
+            foreach (DrawingElement de in dc.Document.GetChildElements(true, ElementType.DrawingElement))
+            {
+                if (de.Shape.ShapeType == ShapeType.Picture)
+                {
+                    Picture pict = (Picture)de.Shape;
+                    imageInventory.Add(pict.ImageData);
+                }
+            }
+
+            // Save all images 
+            for (int i = 0; i < imageInventory.Count; i++)
+            {
+                string targetPath1 = Path.Combine(imageDir.FullName, String.Format("{0}{1}.{2}", imageTemplate, count + 8, imageInventory[i].Format.ToString().ToLower()));
+                File.WriteAllBytes(targetPath1, imageInventory[i].ImageStream.ToArray());               
+            }
+
+            // compare two images
+
+            var InputImage1 = new Bitmap(imagePath + "\\coverPage.jpg");
+            var OutputImage1 = new Bitmap(downLoadPath + "\\picture9.jpeg");
+            var InputImage2 = new Bitmap(imagePath + "\\AFR_logo.jpg");
+            var OutputImage2 = new Bitmap(downLoadPath + "\\picture9.png");
+
+
+            // assert result 
+            var result1 = ImageCompareArray(InputImage1, OutputImage1);
+            var result2 = ImageCompareArray(InputImage2, OutputImage2);
+
+            Assert.IsTrue(result1);
+            Assert.IsTrue(result2);
+
+        }
+
+
+
+        [TestMethod]
+        //Negative
+        //22. Duplicate name for Maintitle
+        public void AB_CoverPage_With_Duplicate_MainTitles()
+        {
+            Logger.Info("Starting test" + "-------------------------------------------");
+            // ARRANGE
+            restRequest.RequestFormat = DataFormat.Json;
+            // Test string
+            String strMaintitle1Expected = "This is Maintitle and needs to be in line one";
+            String strMaintitle2Expected = "This is Maintitle and needs to be in line one";
+
+            // using forming request
+            var agenda = new Agenda
+            {
+                Sections = new List<SectionBase>
+                 {
+                     new SimpleSection
+                     {
+                         Fields = new List<FieldBase>
+                         {
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.MainTitle,
+                                 Content = strMaintitle1Expected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#FFF660"
+                                 }
+                             },
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.MainTitle,
+                                 Content = strMaintitle2Expected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#FFF660"
+                                 }
+                             }
+
+                         }
+                     }
+                 }
+            };
+
+            //serialize json
+            var json = restRequest.JsonSerializer.Serialize(agenda);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+            // ACT
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            byte[] response = restClient.DownloadData(restRequest);
+
+            downLoadPath = downLoadPath + "\\DupMainTitle.docx";
+            File.WriteAllBytes(downLoadPath, response);
+            // retriving text from word based on location
+            String strMaintitle2Actual = GetDataFromWord(downLoadPath, 1).Trim();
+
+            // ASSERT
+            Assert.AreEqual(strMaintitle2Expected, strMaintitle2Actual);
+        }
+
+        [TestMethod]
+        //23. Duplicate name for SubTitle1
+        public void AB_CoverPage_With_DupSubTitle1_Only()
+        {
+            Logger.Info("Starting test" + "-------------------------------------------");
+            // ARRANGE
+            restRequest.RequestFormat = DataFormat.Json;
+            // Test string
+            String strSubtitle1Expected = "This is SubTitle1";
+            String strSubtitle1DupExpected = "This is SubTitle1";
+
+            // using forming request
+            var agenda = new Agenda
+            {
+                Sections = new List<SectionBase>
+                 {
+                     new SimpleSection
+                     {
+                         Fields = new List<FieldBase>
+                         {
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.SubTitle1,
+                                 Content = strSubtitle1Expected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#FFF660"
+                                 }
+                             },
+
+                             new TextField
+                             {
+                                 Name = CoverSectionFieldNames.SubTitle1,
+                                 Content = strSubtitle1DupExpected,
+                                 Font = new ASI.AB.Domain.Fields.Font
+                                 {
+                                     Color = "#FFF660"
+                                 }
+                             }
+                         }
+                     }
+                 }
+            };
+
+            //serialize json
+            var json = restRequest.JsonSerializer.Serialize(agenda);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+            // ACT
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            byte[] response = restClient.DownloadData(restRequest);
+
+            downLoadPath = downLoadPath + "\\DupSubTitles.docx";
+
+            File.WriteAllBytes(downLoadPath, response);
+
+            // retriving text from word based on location
+            String strSubtitle1Actual = GetDataFromWord(downLoadPath, 2).Trim();
+            String strSubtitle1DupActual = GetDataFromWord(downLoadPath, 2).Trim();
+
+
+            // ASSERT
+            Assert.AreEqual(strSubtitle1Expected, strSubtitle1Actual);
+            Assert.AreEqual(strSubtitle1DupExpected, strSubtitle1DupActual);
+
+        }
+
+        
+        static bool ImageCompareArray(Bitmap InputImage, Bitmap OutputImage)
+        {
+            bool flag = true;
+            string inputPixel;
+            string outputPixel;
+            if (InputImage.Width == OutputImage.Width && InputImage.Height == OutputImage.Height)
+            {
+                for (int i = 0; i < InputImage.Width; i++)
+                {
+                    for (int j = 0; j < InputImage.Height; j++)
+                    {
+                        inputPixel = InputImage.GetPixel(i, j).ToString();
+                        outputPixel = OutputImage.GetPixel(i, j).ToString();
+                        if (inputPixel != outputPixel)
+                        {
+                            flag = false;
+                            break;
+                        }
+                    }
+                }
+                if (flag == false)
+                {
+                    
+                    return false;
+                    
+                }
+                else
+                {
+                    OutputImage = null;
+                    return true;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+
+        protected static byte[] ReadImageFile(string imageLocation)
+        {
+            var fileInfo = new FileInfo(imageLocation);
+            var imageFileLength = fileInfo.Length;
+            var fs = new FileStream(imageLocation, FileMode.Open, FileAccess.Read);
+            var br = new BinaryReader(fs);
+
+            return br.ReadBytes((int)imageFileLength);
+        }
+
+
+        public static string GetIp(string path)
+        {
+            String ip = File.ReadLines(path).First().Trim();
+            return ip;
+        }
+ 
+
+    }
+}
