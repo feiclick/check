@@ -1,0 +1,86 @@
+{
+  "Sections": [    
+    {
+      "TemplateId": 1,
+      "Color": null,
+      "Rows": [
+        {
+          "Fields": [
+            {
+              "Content": "Date Day 0",
+              "Font": null,
+              "Name": "DateDay",
+              "FieldType": 0
+            },
+            {
+              "Content": "Session Type",
+              "Font": null,
+              "Name": "Header1",
+              "FieldType": 0
+            },
+            {
+              "Content": "Time",
+              "Font": null,
+              "Name": "Header2",
+              "FieldType": 0
+            },
+            {
+              "Content": "Post Deployment Track #2",
+              "Font": null,
+              "Name": "Header3",
+              "FieldType": 0
+            }
+          ],
+          "Rows": [
+            {
+              "Fields": [
+                {
+                  "Content": "General00",
+                  "Font": null,
+                  "Name": "Type",
+                  "FieldType": 0
+                }
+              ],
+              "Rows": [
+                {
+                  "Fields": [
+                    {
+                      "Content": "Start000",
+                      "Font": null,
+                      "Name": "Start",
+                      "FieldType": 0
+                    },
+                    {
+                      "Content": "End000",
+                      "Font": null,
+                      "Name": "End",
+                      "FieldType": 0
+                    }
+                  ],
+                  "Rows": [
+                    {
+                      "Fields": [
+                        {
+                          "Content": "Description0000",
+                          "Font": null,
+                          "Name": "Description",
+                          "FieldType": 0
+                        },
+                        {
+                          "Content": "Location0000",
+                          "Font": null,
+                          "Name": "Location",
+                          "FieldType": 0
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
