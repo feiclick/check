@@ -3,6 +3,11 @@ using System.Diagnostics;
 using Novacode;
 using RestSharp;
 
+
+
+Validate Date Day - Sunday, 22 January 2017	Fields with case comparison
+
+
 namespace ASI.AB.ApiTests
 {
     public class ScheduleHelper
