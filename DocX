@@ -1,5 +1,29 @@
 http://bbs.csdn.net/topics/391817848 
+https://msdn.microsoft.com/en-us/library/aa537149(v=office.11).aspx examples
 
 http://code1.okbase.net/codefile/Paragraph.cs_201211123001_23.htm
 
 http://www.cnblogs.com/jixiaomeng-821/p/3616169.html
+http://cathalscorner.blogspot.ca/2010/06/docx-and-tables.html 
+
+doc.Sentences[i] or
+
+doc.content
+
+
+ string aCellText;
+    foreach (Row aRow in Application.ActiveDocument.Tables[0].Rows)
+        foreach (Cell aCell in aRow.Cells)
+            aCellText = aCell.Range.Text;
+            
+ Table table = doc.MainDocumentPart.Document.Body.Elements<Table>().First();
+ 
+ //////////////
+ // Load Word file.
+var document = DocumentModel.Load(Server.MapPath("Document.docx"));
+// Get first Table element.
+var table = document.GetChildElements(true, ElementType.Table).Cast<Table>().First();
+
+// Read Table's data.
+foreach(var row in table.Rows)
+    foreach(var cell in row.Cells)
