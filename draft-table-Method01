@@ -1,0 +1,63 @@
+https://msdn.microsoft.com/en-us/library/office/cc850835.aspx
+
+
+using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using DocumentFormat.OpenXml.Wordprocessing;
+using DocumentFormat.OpenXml.Packaging;
+
+// method 1
+namespace Schedule
+{
+    [TestClass]
+    public class UnitTest1
+    {
+        [TestMethod]
+        public static void Main(string [] args)
+        {
+            using (WordprocessingDocument doc = WordprocessingDocument.Open(@"E:\Resource\Template\1.docx", false))
+            {
+                // 1st table
+                Table tb1 = doc.MainDocumentPart.Document.Body.GetTables()[0];
+                // table Rows
+                var rows = tbl.GetTableRows();
+                for (int i = 0; i < rows.Length; i++)
+                {
+                    // table cells
+                    var cells = rows[i].GetTableCells();
+                    // show the content
+                    for (int j = 0; j < cells.Length; j++)
+                        Console.WriteLine("Row:{0} Cell:{1} Value={2}",
+                    i, j,
+                    cells[j].GetTableCellContent())
+   
+
+                 }
+                Console.Read();
+            }
+
+            public static class DocxTableExt
+        {
+            public static Table[] GetTables(this Body body)
+            {
+                return body.Elements<Table>().ToArray();
+            }
+            public static TableRow[] GetTableRows(this Table tbl)
+            {
+                return tbl.Elements<TableRow>().ToArray();
+            }
+            public static TableCell[] GetTableCells(this TableRow tr)
+            {
+                return tr.Elements<TableCell>().ToArray();
+            }
+            public static string GetTableCellContent(this TableCell td)
+            {
+                return string.Join("\n", td.Elements<Paragraph>().Select(o => o.InnerText).ToArray());
+            }
+
+        }
+    }
+}
