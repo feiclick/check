@@ -1,0 +1,72 @@
+    public static DataTable ReadSourceWordData(string filePath)  
+          {  
+              Word.ApplicationClass applicationClass = new Word.ApplicationClass();  
+              Word.Document document = null;  
+              object EmptyData = System.Reflection.Missing.Value;  
+              object path = filePath;  
+              DataTable dt = new DataTable();  
+              try  
+              {  
+                  document = applicationClass.Documents.Open(ref path, ref EmptyData, ref EmptyData, ref EmptyData, ref EmptyData  
+                  , ref EmptyData, ref EmptyData, ref EmptyData, ref EmptyData, ref EmptyData, ref EmptyData, ref EmptyData, ref EmptyData  
+                  , ref EmptyData, ref EmptyData, ref EmptyData);  
+                    
+                  Word.Table table = document.Tables[1];  
+                  if (table != null)  
+                  {  
+     
+                      #region //read the table
+                        //use the first raw as colum heading
+                      for (int columnIndex = 1; columnIndex <= table.Columns.Count; columnIndex++)  
+                      {  
+                          string valueString = table.Cell(1, columnIndex).Range.Text.Trim();  
+                          dt.Columns.Add(valueString.Substring(0, valueString.Length - 2));  
+                      }  
+      
+                      for (int rowIndex = 2; rowIndex <= table.Rows.Count; rowIndex++)  
+                      {  
+                          List<object> rowDatas = new List<object>();  
+      
+                          for (int columnIndex = 1; columnIndex <= table.Columns.Count; columnIndex++)  
+                          {  
+                              try  
+                              {  
+                                  string valueString = table.Cell(rowIndex, columnIndex).Range.Text.Trim();  
+                                  rowDatas.Add(valueString.Substring(0, valueString.Length - 2));  
+                              }  
+                              catch (Exception ex)  
+                              {  
+                                  rowDatas.Add(dt.Rows[rowIndex - 3][columnIndex - 1]);  
+                              }  
+                          }  
+                          dt.Rows.Add(rowDatas.ToArray());  
+                      }   
+     
+                      #endregion  
+                  }  
+      
+                  document.Close(ref EmptyData, ref EmptyData, ref EmptyData);  
+                  applicationClass.Quit(ref EmptyData, ref EmptyData, ref EmptyData);  
+                  System.Runtime.InteropServices.Marshal.ReleaseComObject(applicationClass);  
+                  
+              }  
+              catch (Exception ex)  
+              {  
+                  if (document != null)  
+                  {  
+                      document.Close(ref EmptyData, ref EmptyData, ref EmptyData);  
+                  }  
+      
+                  if (applicationClass != null)  
+                  {  
+                      applicationClass.Quit(ref EmptyData, ref EmptyData, ref EmptyData);  
+                      System.Runtime.InteropServices.Marshal.ReleaseComObject(applicationClass);  
+                  }  
+      
+                  dt = null;  
+      
+                  throw ex;  
+              }  
+      
+              return dt;  
+          }  
