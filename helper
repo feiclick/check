@@ -1,3 +1,11 @@
+  downLoadPath = @"E:\AB\Result";
+ String strDateDayExpected = "Date Day 0";
+String strDateDayExpectedActual = GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 0,0).Trim();
+
+            // ASSERT
+            Assert.AreEqual(strDateDayExpected, strDateDayExpectedActual);
+
+
 using System;
 using System.Diagnostics;
 using RestSharp;
