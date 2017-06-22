@@ -1,0 +1,92 @@
+using System;
+using System.Diagnostics;
+using RestSharp;
+using DocumentFormat.OpenXml.Wordprocessing;
+using DocumentFormat.OpenXml.Packaging;
+using System.Linq;
+using System.Text;
+using System.Collections.Generic;
+
+
+namespace ASI.AB.ScheduleTests
+{
+    public class ScheduleHelper
+    {
+        public RestClient restClient;
+        public RestRequest restRequest;
+        public string downLoadPath = "";
+        public int count = 1;
+
+        public static string GetDataFromWord(String path,int rowNumber, int cellNumber)
+        {
+            // Getting all data from word document
+
+            //String returnTxt = "";
+            int rnum = 0;
+            int cnum = 0;
+            var item = Console.Read();
+
+            Debug.WriteLine("reading a word doc");
+
+            using (WordprocessingDocument doc = WordprocessingDocument.Open(@"E:\AB\Result\AB_Schedule.docx", false))
+            {
+                //1st tables
+
+              Table tb = doc.MainDocumentPart.Document.Body.GetTables()[0];
+
+                // table Rows
+            
+                var rows = tb.GetTableRows();           
+            
+                for (int i = 0; i < rows.Length; i++)
+
+                {
+                    // table cells
+
+                    var cells = rows[i].GetTableCells();
+
+                    // show the content
+
+                    for (int j = 0; j < cells.Length; j++)
+                        Console.WriteLine("Row:{0} Cell:{1} Value={2}", i, j, cells[j].GetTableCellContent());  
+                    if rnum == rowNumber & cnum ==0, 
+                        { return item}
+                }
+
+            }
+            //return returnTxt;
+           
+            return Console.ReadLine();
+          
+        }
+
+
+    }
+
+
+    public static class DocxTableExt
+    {
+        public static Table[] GetTables(this Body body)
+        {
+            return body.Elements<Table>().ToArray();
+
+        }
+        public static TableRow[] GetTableRows(this Table tbl)
+
+        {
+            return tbl.Elements<TableRow>().ToArray();
+        }
+
+        public static TableCell[] GetTableCells(this TableRow tr)
+        {
+            return tr.Elements<TableCell>().ToArray();
+        }
+
+        public static string GetTableCellContent(this TableCell td)
+        {
+            return string.Join("\n", td.Elements<Paragraph>().Select(o => o.InnerText).ToArray());
+        }
+
+    }
+
+}
