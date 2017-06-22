@@ -1,5 +1,7 @@
-https://msdn.microsoft.com/en-us/library/office/cc850835.aspx
-
+openXML
+https://msdn.microsoft.com/en-us/library/office/gg278313.aspx working with tables
+https://msdn.microsoft.com/en-us/library/office/cc850835.aspx change text in table
+https://msdn.microsoft.com/en-us/library/office/jj618412.aspx property value
 
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
