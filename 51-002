@@ -1,0 +1,87 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using RestSharp;
+
+
+namespace ASI.AB.ScheduleTests
+{
+    [TestClass]
+    public class AgendaBuilderScheduleTests : ScheduleHelper
+
+    {
+        //RestClient restClient;
+        //RestRequest restRequest;
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            //  String currentPath = System.IO.Directory.GetParent(System.IO.Directory.GetParent(Environment.CurrentDirectory).ToString()).ToString();
+
+            // path for storing template for testing
+            //downLoadPath = currentPath + "\\Resourses\\Template";
+            //downLoadPath = @"E:\Resource\Template";
+
+            // setting the REST path for testing
+            //  restClient = new RestClient("http://172.28.60.147/");
+            //  restRequest = new RestRequest("agendabuilder/getagenda", Method.POST);
+        }
+
+        [TestMethod]
+        public void TestMethod1()
+
+        {
+            ScheduleHelper a = new ScheduleHelper();
+            string m = a.GetCellFromWord("", 2, 2);
+            restRequest.RequestFormat = DataFormat.Json;
+
+            String strDateDayExpected = "Date Day 0";
+
+            /*
+              // request 
+              var agenda = new Agenda
+              {
+                  Sections = new List<SectionBase>
+                   {
+                       new SimpleSection
+                       {
+                           Fields = new List<FieldBase>
+                           {
+                               new TextField
+                               {
+                                   Name = CoverSectionFieldNames.MainTitle,
+                                   Content = strMaintitleExpected,
+                                   Font = new ASI.AB.Domain.Fields.Font
+                                   {
+                                       Color = "#FFF660"
+                                   }
+                               }
+                           }
+                       }
+                   }
+              };
+
+              //serialize json
+              var json = restRequest.JsonSerializer.Serialize(agenda);
+              restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+              // ACT
+              IRestResponse restResponse = restClient.Execute(restRequest);
+              byte[] response = restClient.DownloadData(restRequest);
+              File.WriteAllBytes(downLoadPath + "\\MainTitle.docx", response);
+               */
+
+            // retriving text from word based on location
+            // String strDateDayExpectedActual = GetCellFromWord(downLoadPath + "\\AB_Schedule.docx", 0,0).Trim();
+            String strDateDayExpectedActual = GetCellFromWord(@"E:\Resource\Template\AB_Schedule.docx", 2, 2).Trim();
+
+            // ASSERT
+            Assert.AreEqual(strDateDayExpected, strDateDayExpectedActual);
+
+
+        }
+
+    }
+}
+
