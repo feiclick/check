@@ -24,7 +24,7 @@ namespace testpj
             using (WordprocessingDocument doc = WordprocessingDocument.Open(
             @"E:\Resource\Template\1.docx", false))
             {
-               // int NUM1 = 2,NUM2 = 2;
+               // int Row1 = 2, Col2 = 2;
                 int n1 = 0, n2 = 0;
 
                
@@ -38,12 +38,12 @@ namespace testpj
                     // table cells
                     var cells = rows[i].GetTableCells();
                     // show the content
-                       if (n1 == NUM1-1)
+                       if (n1 == Row1 - 1)
                           {
                     for (int j = 0; j < cells.Length; j++)
                     {
 
-                        if (n2 == NUM2-1) Console.WriteLine("Row:{0} Cell:{1} Value={2}", i, j, cells[j].GetTableCellContent());
+                        if (n2 == NCol2 - 1) Console.WriteLine("Row:{0} Cell:{1} Value={2}", i, j, cells[j].GetTableCellContent());
                             //return cells[j].GetTableCellContent();
                             n2++;
                     }
