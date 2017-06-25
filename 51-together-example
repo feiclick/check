@@ -1,0 +1,147 @@
+using System;
+using System.Diagnostics;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
+using System.IO;
+//using RestSharp;
+using DocumentFormat.OpenXml.Wordprocessing;
+using DocumentFormat.OpenXml.Packaging;
+using System.Linq;
+using System.Text;
+
+namespace ASI.AB.ScheduleTest
+{
+    [TestClass]
+    public class ScheduleTest
+    {
+       // public RestClient restClient;
+       // public RestRequest restRequest;
+       public string downLoadPath = "";
+
+      
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            //  String currentPath = System.IO.Directory.GetParent(System.IO.Directory.GetParent(Environment.CurrentDirectory).ToString()).ToString();
+
+            // path for storing template for testing
+            //downLoadPath = currentPath + "\\Resourses\\Template";
+            downLoadPath = @"E:\Resource\Template\";
+
+            // setting the REST path for testing
+            //  restClient = new RestClient("http://172.28.60.147/");
+            //  restRequest = new RestRequest("agendabuilder/getagenda", Method.POST);
+        }
+
+
+        [TestMethod]
+        public void ValidateDayDateOnly()
+        {
+           
+            //restRequest.RequestFormat = DataFormat.Json;
+
+            String strDateDayExpected = "Sunday, 22 January 2017";
+
+            /*
+               // request 
+              
+                 
+
+             //serialize json
+             var json = restRequest.JsonSerializer.Serialize(agenda);
+             restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+             // ACT
+             IRestResponse restResponse = restClient.Execute(restRequest);
+             byte[] response = restClient.DownloadData(restRequest);
+             File.WriteAllBytes(downLoadPath + "\\AB_Schedule.docx", response);
+             */
+
+            // retriving text from word based on location
+            // String strDateDayExpectedActual = GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 0,0);
+
+            ScheduleTable s = new ScheduleTable();
+            //string strDateDayActual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 2, 2);
+
+            String strDateDayActual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 1, 1);
+                //@"E:\Resource\Template\AB_Schedule.docx", 1, 1);
+
+            // ASSERT
+            Assert.AreEqual(strDateDayExpected, strDateDayActual);
+
+
+        }
+
+
+    }
+
+    public class ScheduleTable
+    {
+       
+
+        public string GetDataFromWord(String path, int rowNumber, int cellNumber)
+        {
+            // Getting all data from word document                 
+            Debug.WriteLine("reading a word doc");
+       
+
+            using (WordprocessingDocument doc = WordprocessingDocument.Open(path, false))
+            {
+                int rnum = 0, cnum = 0;
+                // get 1st table
+                Table tb1 = doc.MainDocumentPart.Document.Body.GetTables()[0];
+
+                // table Rows
+                var rows = tb1.GetTableRows();
+
+                for (int i = 0; i < rows.Length; i++)
+                {
+                    // table cells
+                    var cells = rows[i].GetTableCells();
+
+                    // show the content
+                    if (rnum == rowNumber - 1)
+                    {
+                        for (int j = 0; j < cells.Length; j++)
+                        {
+                            if (cnum == cellNumber - 1)
+                                return cells[j].GetTableCellContent();
+                            cnum++;
+                        }
+                    }
+                    rnum++;
+                }
+                return cnum.ToString();
+            }
+
+        }
+    }
+
+    public static class DocxTableExt
+    {
+        public static Table[] GetTables(this Body body)
+        {
+            return body.Elements<Table>().ToArray();
+
+        }
+        public static TableRow[] GetTableRows(this Table tbl)
+
+        {
+            return tbl.Elements<TableRow>().ToArray();
+        }
+
+        public static TableCell[] GetTableCells(this TableRow tr)
+        {
+            return tr.Elements<TableCell>().ToArray();
+        }
+
+        public static string GetTableCellContent(this TableCell td)
+        {
+            return string.Join("\n", td.Elements<Paragraph>().Select(o => o.InnerText).ToArray());
+        }
+
+    }
+
+
+}
