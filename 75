@@ -1,0 +1,107 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using Docker.DotNet;
+using Docker.DotNet.Models;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using RestSharp;
+using System.Net;
+
+namespace ASI.AB.PrintInstructionTests
+{
+    [TestClass]
+    public class PrintInstructionTest
+    {
+        public RestClient restClient;
+        public RestRequest restRequest;
+
+
+        enum TagType
+        {
+            SmallerThan, // <
+            GreaterThan  // >
+        }
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            String currentPath = System.IO.Directory.GetParent(System.IO.Directory.GetParent(Environment.CurrentDirectory).ToString()).ToString();
+           // String strContainerFile = System.IO.Directory.GetParent(currentPath).ToString() +
+          //  "\\Docker\\WebApp\\containerIp.txt";
+           // string ipAddress = GetIP(strContainerFile);
+
+            //restClient = new RestClient($"http://{ipAddress}/");
+            restClient = new RestClient("http:172.18.7.221/");
+            
+            restRequest = new RestRequest("PrintInstructions/Get/", Method.GET);
+        }
+        [TestMethod]
+        // validate 
+        public void Verify_Print_Instruction()
+        {
+
+            // ACT
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            var resultdata = restResponse.Content;
+
+            //html format
+            var result = IsValid(resultdata);
+            Assert.IsTrue(result);
+
+            //Assert Response code
+            Assert.AreEqual(HttpStatusCode.OK, restResponse.StatusCode);
+
+            //Assert Text;
+            StringAssert.Contains(resultdata, "<i>Print on Both Sides</i>");
+            StringAssert.Contains(resultdata, "<i>Page Setup</i>");
+        }
+
+
+        // validate the format of html
+        public static bool IsValid(string html)
+        {
+            // Must start with <
+            TagType expected = TagType.SmallerThan;
+            for (int i = 0; i < html.Length; i++)
+            {
+                bool smallerThan = html[i] == '<';
+                bool greaterThan = html[i] == '>';
+
+                if (!smallerThan && !greaterThan)
+                {
+                    continue;
+                }
+                if (smallerThan && expected == TagType.SmallerThan)
+                {
+                    expected = TagType.GreaterThan;
+                    continue;
+                }
+                if (greaterThan && expected == TagType.GreaterThan)
+                {
+                    expected = TagType.SmallerThan;
+                    continue;
+                }
+                return false;
+            }
+            return expected == TagType.SmallerThan;
+        }
+
+        public static string GetIP(string path)
+        {
+            String ip = File.ReadLines(path).First().Trim();
+            return ip;
+        }
+
+
+    }
+
+
+
+
+}
+
+
+
+
