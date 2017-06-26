@@ -1,0 +1,434 @@
+using System;
+using System.Diagnostics;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
+using System.IO;
+//using RestSharp;
+using DocumentFormat.OpenXml.Wordprocessing;
+using DocumentFormat.OpenXml.Packaging;
+using System.Linq;
+using System.Text;
+
+namespace ASI.AB.ScheduleTests
+{
+    [TestClass]
+    public class ScheduleTests
+    {
+        // public RestClient restClient;
+        // public RestRequest restRequest;
+        public string downLoadPath = "";
+
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            //  String currentPath = System.IO.Directory.GetParent(System.IO.Directory.GetParent(Environment.CurrentDirectory).ToString()).ToString();
+
+            // path for storing template for testing
+            //downLoadPath = currentPath + "\\Resourses\\Template";
+            downLoadPath = @"E:\Resource\Schedule\";
+
+            // setting the REST path for testing
+            //  restClient = new RestClient("http://172.28.60.147/");
+            //  restRequest = new RestRequest("agendabuilder/getagenda", Method.POST);
+        }
+
+
+        [TestMethod]
+        //1. Day1_SingleSession_Validate_Date Day
+        public void ValidateDayDate_CaseComparison()
+        {
+
+            //restRequest.RequestFormat = DataFormat.Json;
+
+            string strDateDayExpected = "DaY dATe 1- caSE COmpaRiSOn";
+
+            /*
+               // request                            
+
+             //serialize json
+             var json = restRequest.JsonSerializer.Serialize(agenda);
+             restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+             // ACT
+             IRestResponse restResponse = restClient.Execute(restRequest);
+             byte[] response = restClient.DownloadData(restRequest);
+             File.WriteAllBytes(downLoadPath + "\\AB_Schedule.docx", response);
+             */
+
+            // retriving text from word based on location
+            // String strDateDayExpectedActual = GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 0,0);
+
+            ScheduleTable s = new ScheduleTable();
+
+            string strDateDayActual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 1, 1, 1).Trim();         
+
+            // ASSERT
+            Assert.AreEqual(strDateDayExpected, strDateDayActual);
+        }
+
+        [TestMethod]
+        //2. Day1_SingleSession_Validate_Header1_SesionType
+        public void ValidateSessionType_withmorethan30Characters()
+        {
+
+            //restRequest.RequestFormat = DataFormat.Json;
+
+            string strSessionExpected = "General00 with more than 30 characters";
+
+            /*
+               // request                            
+
+             //serialize json
+             var json = restRequest.JsonSerializer.Serialize(agenda);
+             restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+             // ACT
+             IRestResponse restResponse = restClient.Execute(restRequest);
+             byte[] response = restClient.DownloadData(restRequest);
+             File.WriteAllBytes(downLoadPath + "\\AB_Schedule.docx", response);
+             */
+
+            // retriving text from word based on location
+            // String strDateDayExpectedActual = GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 0,0);
+
+            ScheduleTable s = new ScheduleTable();
+            String strSessionActual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 1, 3, 2);
+
+            // ASSERT
+            Assert.AreEqual(strSessionExpected, strSessionActual);
+        }
+
+
+
+        [TestMethod]
+        //3. Day1_SingleSession_Validate_Header2_Time
+        public void ValidateTimewithValidDigits()
+        {
+
+            //restRequest.RequestFormat = DataFormat.Json;
+
+            String strTimeExpected = "08.00-09.00";
+
+            /*
+               // request                            
+
+             //serialize json
+             var json = restRequest.JsonSerializer.Serialize(agenda);
+             restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+             // ACT
+             IRestResponse restResponse = restClient.Execute(restRequest);
+             byte[] response = restClient.DownloadData(restRequest);
+             File.WriteAllBytes(downLoadPath + "\\AB_Schedule.docx", response);
+             */
+
+            // retriving text from word based on location
+            ScheduleTable s = new ScheduleTable();
+            String strTimeActual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 1, 3, 1).Trim();
+
+            // ASSERT
+            Assert.AreEqual(strTimeExpected, strTimeActual);
+        }
+
+        [TestMethod]
+        //4. Day1_SingleSession_Header3_DeploymentPhase
+        public void ValidateDeploymentPhase_with_space_characters()
+        {
+
+            //restRequest.RequestFormat = DataFormat.Json;
+
+            string strPhaseExpected = "  Po st Deploy  ment Track # 2 ";
+
+            /*
+               // request                            
+
+             //serialize json
+             var json = restRequest.JsonSerializer.Serialize(agenda);
+             restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+             // ACT
+             IRestResponse restResponse = restClient.Execute(restRequest);
+             byte[] response = restClient.DownloadData(restRequest);
+             File.WriteAllBytes(downLoadPath + "\\AB_Schedule.docx", response);
+             */
+
+            // retriving text from word based on location
+            ScheduleTable s = new ScheduleTable();
+            string strPhaseActual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 1, 2, 3);
+
+            // ASSERT
+            Assert.AreEqual(strPhaseExpected, strPhaseActual);
+        }
+
+        [TestMethod]
+        //5. Day1_SingleSession_Validate_Description
+        public void ValidateDescriptionWithSpecialSigns()
+        {
+
+            //restRequest.RequestFormat = DataFormat.Json;
+
+            string strDescpExpected = "//*@()'s Registration/Meet & Greet," +"\n" + "Grand Ballroom Foyer";
+
+            /*
+               // request                            
+
+             //serialize json
+             var json = restRequest.JsonSerializer.Serialize(agenda);
+             restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+             // ACT
+             IRestResponse restResponse = restClient.Execute(restRequest);
+             byte[] response = restClient.DownloadData(restRequest);
+             File.WriteAllBytes(downLoadPath + "\\AB_Schedule.docx", response);
+             */
+
+            // retriving text from word based on location
+            ScheduleTable s = new ScheduleTable();
+            String strDescpActual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 1, 3, 3).Trim();
+
+            // ASSERT
+            Assert.AreEqual(strDescpExpected, strDescpActual);
+        }
+        [TestMethod]
+        //6. Day2_Multiple_Sessions_Validate_Description
+        public void Validate_Day0withMultipleSession()
+        {
+            //restRequest.RequestFormat = DataFormat.Json;
+
+            string strDateDayExpected = "Date Day 2";      
+            string strTime1Expected = "15:00 – 15:30";
+            string strTime2Expected = "16.00-17.00";          
+            string strSession1Expected = "General 10";
+            string strSession2Expected = "General 16 – Next Page";
+            string strDescp1Expected = "Description10" + "\n" + "Location10";
+            string strDescp2Expected = "Description11" + "\n" + "Location11";
+
+            /*
+               // request                            
+
+             //serialize json
+             var json = restRequest.JsonSerializer.Serialize(agenda);
+             restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+             // ACT
+             IRestResponse restResponse = restClient.Execute(restRequest);
+             byte[] response = restClient.DownloadData(restRequest);
+             File.WriteAllBytes(downLoadPath + "\\AB_Schedule.docx", response);
+             */
+
+            // retriving text from word based on location
+            ScheduleTable s = new ScheduleTable();
+            string strDateDayActual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 2, 1, 1).Trim();          
+            string strTime1Actual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 2, 10, 1).Trim();
+            string strTime2Actual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 2, 11, 1).Trim();            
+            string strSession1Actual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 2, 10, 2).Trim();
+            string strSession2Actual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 2, 11, 2).Trim();
+            string strDescp1Actual = s.GetDataFromWord (downLoadPath + "\\AB_Schedule.docx", 2, 10, 3).Trim();
+            string strDescp2Actual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 2, 11, 3).Trim();
+
+            // ASSERT
+            Assert.AreEqual(strDateDayExpected, strDateDayActual);
+            Assert.AreEqual(strTime1Expected, strTime1Actual);
+            Assert.AreEqual(strTime2Expected, strTime2Actual);
+            Assert.AreEqual(strSession1Expected, strSession1Actual);
+            Assert.AreEqual(strSession2Expected, strSession2Actual);
+            Assert.AreEqual(strDescp1Expected, strDescp1Actual);
+            Assert.AreEqual(strDescp2Expected, strDescp2Actual);
+
+        }
+
+        
+
+        [TestMethod]
+        //7. Multiple_Days_Mutiple_Sessions_Validate_Day2_Time
+        public void Validate_Day2_Time()
+        {
+            //restRequest.RequestFormat = DataFormat.Json;
+
+            string strDescpExpected = "Description's validation" + " *@() © 1st Sgt /AF & R / FM / JAG(If this is your 1st Pre - deployment event, you must attend one time only)" + "\n" + "Director's Row I";
+
+            /*
+               // request                            
+
+             //serialize json
+             var json = restRequest.JsonSerializer.Serialize(agenda);
+             restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+             // ACT
+             IRestResponse restResponse = restClient.Execute(restRequest);
+             byte[] response = restClient.DownloadData(restRequest);
+             File.WriteAllBytes(downLoadPath + "\\AB_Schedule.docx", response);
+             */
+
+            // retriving text from word based on location
+            ScheduleTable s = new ScheduleTable();
+            string strDescpActual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 2, 3, 3).Trim();
+
+            // ASSERT
+            Assert.AreEqual(strDescpExpected, strDescpActual);
+        }
+
+        [TestMethod]
+        //8. Multiple_Days_with_Mutiple_Sessions_Validate_Description
+        public void Validate_Day3()
+        {
+            //restRequest.RequestFormat = DataFormat.Json;
+
+            string strDateDayExpected = "Date Day 3";
+            string strTimeExpected = "10:45-12:05";
+            string strSessionExpected = "General -Table 3";
+            string strDescpExpected = "Fitness" + "\n" + "Director's Row I";
+
+
+            /*
+               // request                            
+
+             //serialize json
+             var json = restRequest.JsonSerializer.Serialize(agenda);
+             restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+             // ACT
+             IRestResponse restResponse = restClient.Execute(restRequest);
+             byte[] response = restClient.DownloadData(restRequest);
+             File.WriteAllBytes(downLoadPath + "\\AB_Schedule.docx", response);
+             */
+
+            // retriving text from word based on location
+            ScheduleTable s = new ScheduleTable();
+            string strDateDayActual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 3, 1, 1).Trim();
+            string strTimeActual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 3, 3, 1).Trim();
+            string strSessionActual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 3, 3, 2).Trim();
+            string strDescpActual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 3, 3, 3).Trim();
+
+            // ASSERT
+            Assert.AreEqual(strDateDayExpected, strDateDayActual);
+            Assert.AreEqual(strTimeExpected, strTimeActual);
+            Assert.AreEqual(strSessionExpected, strSessionActual);
+            Assert.AreEqual(strDescpExpected, strDescpActual);
+
+        }
+
+
+        [TestMethod]
+        //9. Multiple_Days_with_Mutiple_Sessions_Validate_Description
+        public void Validate_Day4()
+        {
+            //restRequest.RequestFormat = DataFormat.Json;
+
+            string strDateDayExpected = "Date Day 4";
+            string strTimeExpected = "10:45-12:05";
+            string strSessionExpected = "General -Table 3";
+            string strDescpExpected = "Fitness" + "\n" + "Director's Row I";
+
+
+            /*
+               // request                            
+
+             //serialize json
+             var json = restRequest.JsonSerializer.Serialize(agenda);
+             restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+             // ACT
+             IRestResponse restResponse = restClient.Execute(restRequest);
+             byte[] response = restClient.DownloadData(restRequest);
+             File.WriteAllBytes(downLoadPath + "\\AB_Schedule.docx", response);
+             */
+
+            // retriving text from word based on location
+            ScheduleTable s = new ScheduleTable();
+            string strDateDayActual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 3, 1, 1).Trim();
+            string strTimeActual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 3, 3, 1).Trim();
+            string strSessionActual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 3, 3, 2).Trim();
+            string strDescpActual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 3, 3, 3).Trim();
+
+            // ASSERT
+            Assert.AreEqual(strDateDayExpected, strDateDayActual);
+            Assert.AreEqual(strTimeExpected, strTimeActual);
+            Assert.AreEqual(strSessionExpected, strSessionActual);
+            Assert.AreEqual(strDescpExpected, strDescpActual);
+
+        }
+
+
+
+    }
+
+
+
+    public class ScheduleTable
+    {
+        public string GetDataFromWord(String path, int tableNumber, int rowNumber, int cellNumber)
+        {
+            // Getting all data from word document                 
+            Debug.WriteLine("reading a word doc");
+
+            using (WordprocessingDocument doc = WordprocessingDocument.Open(path, false))
+            {
+                int tnum = 0, rnum = 0, cnum = 0;
+
+                // Table tb = doc.MainDocumentPart.Document.Body.GetTables()[t];
+
+                var tbs = doc.MainDocumentPart.Document.Body.GetTables();
+
+                for (int t = 0; t < tbs.Length; t++)
+                {
+                    // table Rows
+                    var rows = tbs[t].GetTableRows();
+
+                    if (tnum == tableNumber - 1)
+                    {
+
+                        for (int i = 0; i < rows.Length; i++)
+                        {
+                            // table cells
+                            var cells = rows[i].GetTableCells();
+
+                            // show the content
+                            if (rnum == rowNumber - 1)
+                            {
+                                for (int j = 0; j < cells.Length; j++)
+                                {
+                                    if (cnum == cellNumber - 1)
+                                        return cells[j].GetTableCellContent();
+                                    cnum++;
+                                }
+                            }
+                            rnum++;
+                        }
+                    }
+                    tnum++;
+                }
+                return tnum.ToString();
+            }
+        }
+    }
+
+    public static class DocxTableExt
+    {
+        public static Table[] GetTables(this Body body)
+        {
+            return body.Elements<Table>().ToArray();
+
+        }
+        public static TableRow[] GetTableRows(this Table tb)
+
+        {
+            return tb.Elements<TableRow>().ToArray();
+        }
+
+        public static TableCell[] GetTableCells(this TableRow tr)
+        {
+            return tr.Elements<TableCell>().ToArray();
+        }
+
+        public static string GetTableCellContent(this TableCell tc)
+        {
+            return string.Join("\n", tc.Elements<Paragraph>().Select(o => o.InnerText).ToArray());
+
+        }
+
+    }
+
+
+}
