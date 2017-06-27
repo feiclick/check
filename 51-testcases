@@ -1,0 +1,956 @@
+  //////
+  day 3
+  
+  Date Day 3 - Saturday, 21 January 2017
+Time	Session Type	Post Deployment Track #2 
+10.45-12.05	General	Fitness
+Director's Row I
+
+
+12.50-13.05	Breakout #1	Break: Visit Resource Providers
+South Convention Lobby
+13.05-14.05	Breakout #2	Warrior Support Forum
+Tower Court A
+////////
+
+Date Day 4
+Time	Session Type	Post Deployment Track #2 
+10.00-11.00	General -Table 4	Fitness
+Director's Row I
+
+
+11.30-12.30	Breakout #1	Lunch 
+Grand Ballroom
+14.00-15.00	Breakout #2	Warrior Support Forum
+Tower Court A
+16.00-17.00	General	Emotional Cycles of Deployment
+Director's Row B
+
+  
+  /////////////
+  ///////////
+  
+  [TestMethod]
+        //7. Multiple_Days_with_Mutiple_Sessions_Validate_Description
+        public void Validate_Day3()
+        {
+            //restRequest.RequestFormat = DataFormat.Json;
+
+            string strDateDayExpected = "Date Day 3 - Saturday, 21 January 2017";
+            string strTimeExpected = "12.50-13.05";
+            string strSessionExpected = "Breakout #1";
+            string strDescpExpected = "Break: Visit Resource Providers" + "\n" + "South Convention Lobby";
+
+            /*
+            
+               // request  
+               
+            
+            var agenda = new Agenda
+			{
+				Sections = new List<Section>
+				{
+					new Section
+					{
+						//Color = "#4682b4",
+						// schedule
+						TemplateId = TemplateId.Schedule0,
+						Rows = new List<Row>
+						{
+							new Row
+							{
+								Fields = new List<FieldBase>
+								{
+									new TextField
+									{
+										Name = ScheduleSectionFieldNames.DateDay,
+										Content = "Date Day 1"
+									},
+									new TextField
+									{
+										Name = ScheduleSectionFieldNames.Header1,
+										Content = "Session Type"
+									},
+									new TextField
+									{
+										Name = ScheduleSectionFieldNames.Header2,
+										Content = "Time"
+									},
+									new TextField
+									{
+										Name = ScheduleSectionFieldNames.Header3,
+										Content = "Post Deployment Track #1"
+									},
+								},
+								Rows = new List<Row>
+								{
+									new Row
+									{
+										Fields = new List<FieldBase>
+										{
+											new TextField
+											{
+												Name = ScheduleSectionFieldNames.Type,
+												Content = "General",
+											}
+										},
+										Rows = new List<Row>
+										{
+											new Row
+											{
+												Fields = new List<FieldBase>
+												{
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.Start,
+														Content = "Start000"
+													},
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.End,
+														Content = "End000"
+													},
+
+												},
+												Rows = new List<Row>
+												{
+													new Row
+													{
+														Fields = new List<FieldBase>
+														{
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Description,
+																Content = "Description0000"
+															},
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Location,
+																Content = "Location0000"
+															},
+														},
+													}
+												}
+											}
+										}
+									},
+								}
+							},
+							new Row
+							{
+								Fields = new List<FieldBase>
+								{
+									new TextField
+									{
+										Name = ScheduleSectionFieldNames.DateDay,
+										Content = "Date Day 2"
+									},
+									new TextField
+									{
+										Name = ScheduleSectionFieldNames.Header1,
+										Content = "Session Type"
+									},
+									new TextField
+									{
+										Name = ScheduleSectionFieldNames.Header2,
+										Content = "Time"
+									},
+									new TextField
+									{
+										Name = ScheduleSectionFieldNames.Header3,
+										Content = "Post Deployment Track #2"
+									},
+								},
+								Rows = new List<Row>
+								{
+									new Row
+									{
+										Fields = new List<FieldBase>
+										{
+											new TextField
+											{
+												Name = ScheduleSectionFieldNames.Type,
+												Content = "General 1",
+											}
+										},
+										Rows = new List<Row>
+										{
+											new Row
+											{
+												Fields = new List<FieldBase>
+												{
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.Start,
+														Content = "Start100"
+													},
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.End,
+														Content = "End100"
+													},
+
+												},
+												Rows = new List<Row>
+												{
+													new Row
+													{
+														Fields = new List<FieldBase>
+														{
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Description,
+																Content = "Description1-1"
+															},
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Location,
+																Content = "Location1-1"
+															},
+														},
+													}
+												}
+											},
+											new Row
+											{
+												Fields = new List<FieldBase>
+												{
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.Start,
+														Content = "Start102"
+													},
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.End,
+														Content = "End102"
+													},
+
+												},
+												Rows = new List<Row>
+												{
+													new Row
+													{
+														Fields = new List<FieldBase>
+														{
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Description,
+																Content = "Description1-2"
+															},
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Location,
+																Content = "Location1-2"
+															},
+														},
+													},
+													new Row
+													{
+														Fields = new List<FieldBase>
+														{
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Description,
+																Content = "Description1-3"
+															},
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Location,
+																Content = "Location1-3"
+															},
+														},
+													}
+												}
+											},
+										}
+									},
+									new Row
+									{
+										Fields = new List<FieldBase>
+										{
+											new TextField
+											{
+												Name = ScheduleSectionFieldNames.Type,
+												Content = "General 2"
+											},
+										},
+										Rows = new List<Row>
+										{
+											new Row
+											{
+												Fields = new List<FieldBase>
+												{
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.Start,
+														Content = "Start200"
+													},
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.End,
+														Content = "End200"
+													},
+
+												},
+												Rows = new List<Row>
+												{
+													new Row
+													{
+														Fields = new List<FieldBase>
+														{
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Description,
+																Content = "Description2"
+															},
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Location,
+																Content = "Location2"
+															},
+														},
+													}
+												}
+											},
+										}
+									},
+									new Row
+									{
+										Fields = new List<FieldBase>
+										{
+											new TextField
+											{
+												Name = ScheduleSectionFieldNames.Type,
+												Content = "General 3"
+											},
+										},
+										Rows = new List<Row>
+										{
+											new Row
+											{
+												Fields = new List<FieldBase>
+												{
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.Start,
+														Content = "Start300"
+													},
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.End,
+														Content = "End300"
+													},
+
+												},
+												Rows = new List<Row>
+												{
+													new Row
+													{
+														Fields = new List<FieldBase>
+														{
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Description,
+																Content = "Description3-1"
+															},
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Location,
+																Content = "Location3-1"
+															},
+														},
+													},
+													new Row
+													{
+														Fields = new List<FieldBase>
+														{
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Description,
+																Content = "Description3-2"
+															},
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Location,
+																Content = "Location3-2"
+															},
+														},
+													},
+												}
+											},
+										}
+									},
+                                   
+                                    new Row
+									{
+										Fields = new List<FieldBase>
+										{
+											new TextField
+											{
+												Name = ScheduleSectionFieldNames.Type,
+												Content = "General 4"
+											},
+										},
+										Rows = new List<Row>
+										{
+											new Row
+											{
+												Fields = new List<FieldBase>
+												{
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.Start,
+														Content = "Start400"
+													},
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.End,
+														Content = "End400"
+													},
+
+												},
+												Rows = new List<Row>
+												{
+													new Row
+													{
+														Fields = new List<FieldBase>
+														{
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Description,
+																Content = "Description4"
+															},
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Location,
+																Content = "Location4"
+															},
+														},
+													}
+												}
+											},
+										}
+									},
+
+                                    new Row
+									{
+										Fields = new List<FieldBase>
+										{
+											new TextField
+											{
+												Name = ScheduleSectionFieldNames.Type,
+												Content = "General 5"
+											},
+										},
+										Rows = new List<Row>
+										{
+											new Row
+											{
+												Fields = new List<FieldBase>
+												{
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.Start,
+														Content = "Start500"
+													},
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.End,
+														Content = "End500"
+													},
+
+												},
+												Rows = new List<Row>
+												{
+													new Row
+													{
+														Fields = new List<FieldBase>
+														{
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Description,
+																Content = "Description5"
+															},
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Location,
+																Content = "Location5"
+															},
+														},
+													}
+												}
+											},
+										}
+									},
+                                    new Row
+									{
+										Fields = new List<FieldBase>
+										{
+											new TextField
+											{
+												Name = ScheduleSectionFieldNames.Type,
+												Content = "General 6"
+											},
+										},
+										Rows = new List<Row>
+										{
+											new Row
+											{
+												Fields = new List<FieldBase>
+												{
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.Start,
+														Content = "Start600"
+													},
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.End,
+														Content = "End600"
+													},
+
+												},
+												Rows = new List<Row>
+												{
+													new Row
+													{
+														Fields = new List<FieldBase>
+														{
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Description,
+																Content = "Description6"
+															},
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Location,
+																Content = "Location6"
+															},
+														},
+													}
+												}
+											},
+										}
+									},
+                                       
+                                   new Row
+									{
+										Fields = new List<FieldBase>
+										{
+											new TextField
+											{
+												Name = ScheduleSectionFieldNames.Type,
+												Content = "General 7"
+											},
+										},
+										Rows = new List<Row>
+										{
+											new Row
+											{
+												Fields = new List<FieldBase>
+												{
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.Start,
+														Content = "16.00"
+													},
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.End,
+														Content = "17.00"
+													},
+
+												},
+												Rows = new List<Row>
+												{
+													new Row
+													{
+														Fields = new List<FieldBase>
+														{
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Description,
+																Content = "Validate-Description7"
+															},
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Location,
+																Content = "Vaidate-Location7"
+															},
+														},
+													}
+												}
+											},
+										}
+									},
+                                 
+                                   new Row
+									{
+										Fields = new List<FieldBase>
+										{
+											new TextField
+											{
+												Name = ScheduleSectionFieldNames.Type,
+												Content = "General 8 – Next Page"
+											},
+										},
+										Rows = new List<Row>
+										{
+											new Row
+											{
+												Fields = new List<FieldBase>
+												{
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.Start,
+														Content = "17.30"
+													},
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.End,
+														Content = "18.00"
+													},
+
+												},
+												Rows = new List<Row>
+												{
+													new Row
+													{
+														Fields = new List<FieldBase>
+														{
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Description,
+																Content = "Validate-Description8"
+															},
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Location,
+																Content = "Validate-Location8"
+															},
+														},
+													}
+												}
+											},
+										}
+									},
+                                
+                                   new Row
+									{
+										Fields = new List<FieldBase>
+										{
+											new TextField
+											{
+												Name = ScheduleSectionFieldNames.Type,
+												Content = "General 9"
+											},
+										},
+										Rows = new List<Row>
+										{
+											new Row
+											{
+												Fields = new List<FieldBase>
+												{
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.Start,
+														Content = "Start900"
+													},
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.End,
+														Content = "End900"
+													},
+
+												},
+												Rows = new List<Row>
+												{
+													new Row
+													{
+														Fields = new List<FieldBase>
+														{
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Description,
+																Content = "Description9"
+															},
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Location,
+																Content = "Location9"
+															},
+														},
+													}
+												}
+											},
+										}
+									},
+                                 
+                                     new Row
+									{
+										Fields = new List<FieldBase>
+										{
+											new TextField
+											{
+												Name = ScheduleSectionFieldNames.Type,
+												Content = "General 10"
+											},
+										},
+										Rows = new List<Row>
+										{
+											new Row
+											{
+												Fields = new List<FieldBase>
+												{
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.Start,
+														Content = "Start10"
+													},
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.End,
+														Content = "End110"
+													},
+
+												},
+												Rows = new List<Row>
+												{
+													new Row
+													{
+														Fields = new List<FieldBase>
+														{
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Description,
+																Content = "Description10"
+															},
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Location,
+																Content = "Location10"
+															},
+														},
+													}
+												}
+											},
+										}
+									},                                                                  
+								}
+							},
+
+                           new Row
+							{
+								Fields = new List<FieldBase>
+								{
+									new TextField
+									{
+										Name = ScheduleSectionFieldNames.DateDay,
+										Content = "Date Day 3 - Saturday, 21 January 2017"
+									},
+									new TextField
+									{
+										Name = ScheduleSectionFieldNames.Header1,
+										Content = "Session Type"
+									},
+									new TextField
+									{
+										Name = ScheduleSectionFieldNames.Header2,
+										Content = "Time"
+									},
+									new TextField
+									{
+										Name = ScheduleSectionFieldNames.Header3,
+										Content = "Post Deployment Track #3"
+									},
+								},
+								Rows = new List<Row>
+								{
+									new Row
+									{
+										Fields = new List<FieldBase>
+										{
+											new TextField
+											{
+												Name = ScheduleSectionFieldNames.Type,
+												Content = "General - D3",
+											}
+										},
+										Rows = new List<Row>
+										{
+											new Row
+											{
+												Fields = new List<FieldBase>
+												{
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.Start,
+														Content = "10:45"
+													},
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.End,
+														Content = "12:05"
+													},
+
+												},
+												Rows = new List<Row>
+												{
+													new Row
+													{
+														Fields = new List<FieldBase>
+														{
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Description,
+																Content = "Fitness"
+															},
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Location,
+																Content = "Director's Row I"
+															},
+														},
+													}
+												}
+											}
+										}
+									},
+                                     
+                                    new Row
+									{
+										Fields = new List<FieldBase>
+										{
+											new TextField
+											{
+												Name = ScheduleSectionFieldNames.Type,
+												Content = "Breakout #1"
+											},
+										},
+										Rows = new List<Row>
+										{
+											new Row
+											{
+												Fields = new List<FieldBase>
+												{
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.Start,
+														Content = "12.50"
+													},
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.End,
+														Content = "13.05"
+													},
+
+												},
+												Rows = new List<Row>
+												{
+													new Row
+													{
+														Fields = new List<FieldBase>
+														{
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Description,
+																Content = "Break: Visit Resource Providers"
+															},
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Location,
+																Content = "South Convention Lobby"
+															},
+														},
+													}
+												}
+											},
+										}
+									},
+                                 
+                                     new Row
+									{
+										Fields = new List<FieldBase>
+										{
+											new TextField
+											{
+												Name = ScheduleSectionFieldNames.Type,
+												Content = "Breakout #2"
+											},
+										},
+										Rows = new List<Row>
+										{
+											new Row
+											{
+												Fields = new List<FieldBase>
+												{
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.Start,
+														Content = "13.05"
+													},
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.End,
+														Content = "14.05"
+													},
+
+												},
+												Rows = new List<Row>
+												{
+													new Row
+													{
+														Fields = new List<FieldBase>
+														{
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Description,
+																Content = "Warrior Support Forum"
+															},
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Location,
+																Content = "Tower Court A"
+															},
+														},
+													}
+												}
+											},
+										}
+									},
+								}
+							},
+						}
+					},
+				}
+			};
+
+            ///////////////////
+
+
+
+             //serialize json
+             var json = restRequest.JsonSerializer.Serialize(agenda);
+             restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+             // ACT
+             IRestResponse restResponse = restClient.Execute(restRequest);
+             byte[] response = restClient.DownloadData(restRequest);
+             File.WriteAllBytes(downLoadPath + "\\AB_Schedule.docx", response);
+             */
+
+            // retriving text from word based on location
+            ScheduleTable s = new ScheduleTable();
+            string strDateDayActual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 3, 1, 1).Trim();
+            string strTimeActual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 3, 4, 1).Trim();
+            string strSessionActual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 3, 4, 2).Trim();
+            string strDescpActual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 3, 4, 3).Trim();
+
+            // ASSERT
+            Assert.AreEqual(strDateDayExpected, strDateDayActual);
+            Assert.AreEqual(strTimeExpected, strTimeActual);
+            Assert.AreEqual(strSessionExpected, strSessionActual);
+            Assert.AreEqual(strDescpExpected, strDescpActual);
+
+        }
