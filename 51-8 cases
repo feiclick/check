@@ -541,8 +541,7 @@ namespace ASI.AB.ScheduleTests
             Assert.AreEqual(strPhaseExpected, strPhaseActual);
         }
 
-        [TestMethod]
-        [Ignore] //bug created in 1723
+        [TestMethod]      
         //5. Day1_SingleSession_Validate_Description
 
         public void ValidateDescriptionWithSpecialSigns()
@@ -550,7 +549,7 @@ namespace ASI.AB.ScheduleTests
 
             //restRequest.RequestFormat = DataFormat.Json;
 
-            string strDescpExpected = "\"\"//*@()'s Registration/Meet & Greet," +"\n" + "Grand Ballroom Foyer";
+            string strDescpExpected = "\"\"//*@()'s Registration/Meet & Greet" +"\n" + "Grand Ballroom Foyer";
 
             /*
                // request                                                     
@@ -588,7 +587,6 @@ namespace ASI.AB.ScheduleTests
                                         Name = ScheduleSectionFieldNames.Header3,
                                         Content = "Post Deployment Track #1"
                                     },
-
                                 },
                                 Rows = new List<Row>
                                 {
@@ -672,7 +670,7 @@ namespace ASI.AB.ScheduleTests
 
         [TestMethod]
         //6. Day2_10_Multiple_Sessions
-        public void Validate_Day0withMultipleSession()
+        public void Validate_Day2withMultipleSession()
         {
             //restRequest.RequestFormat = DataFormat.Json;
 
