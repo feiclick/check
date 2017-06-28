@@ -1,34 +1,3 @@
-  //////
-  day 3
-  
-  Date Day 3 - Saturday, 21 January 2017
-Time	Session Type	Post Deployment Track #2 
-10.45-12.05	General	Fitness
-Director's Row I
-
-
-12.50-13.05	Breakout #1	Break: Visit Resource Providers
-South Convention Lobby
-13.05-14.05	Breakout #2	Warrior Support Forum
-Tower Court A
-////////
-
-Date Day 4
-Time	Session Type	Post Deployment Track #2 
-10.00-11.00	General -Table 4	Fitness
-Director's Row I
-
-
-11.30-12.30	Breakout #1	Lunch 
-Grand Ballroom
-14.00-15.00	Breakout #2	Warrior Support Forum
-Tower Court A
-16.00-17.00	General	Emotional Cycles of Deployment
-Director's Row B
-
-  
-  /////////////
-  ///////////
   
   [TestMethod]
         //7. Multiple_Days_with_Mutiple_Sessions_Validate_Description
@@ -36,12 +5,15 @@ Director's Row B
         {
             //restRequest.RequestFormat = DataFormat.Json;
 
-            string strDateDayExpected = "Date Day 3 - Saturday, 21 January 2017";
-            string strTimeExpected = "12.50-13.05";
-            string strSessionExpected = "Breakout #1";
-            string strDescpExpected = "Break: Visit Resource Providers" + "\n" + "South Convention Lobby";
+            string strDateDayExpected = "Date Day 4 - Sunday, 22 January 2017";
+            string strTime1Expected = "10.00-11.00";
+            string strTime2Expected = "11.30-12.30";
+            string strSession1Expected = "General - D4";
+            string strSession2Expected = "Breakout #1";
+            string strDescp1Expected = "Fitness" + "\n" + "Director's Row I";
+            string strDescp2Expected = "Lunch" + "\n" + "Grand Ballroom";
 
-            /*
+            
             
                // request  
                
@@ -919,6 +891,290 @@ Director's Row B
 											},
 										}
 									},
+
+                                      new Row
+                                    {
+                                        Fields = new List<FieldBase>
+                                        {
+                                            new TextField
+                                            {
+                                                Name = ScheduleSectionFieldNames.Type,
+                                                Content = "Breakout #3"
+                                            },
+                                        },
+                                        Rows = new List<Row>
+                                        {
+                                            new Row
+                                            {
+                                                Fields = new List<FieldBase>
+                                                {
+                                                    new TextField
+                                                    {
+                                                        Name = ScheduleSectionFieldNames.Start,
+                                                        Content = "14.30"
+                                                    },
+                                                    new TextField
+                                                    {
+                                                        Name = ScheduleSectionFieldNames.End,
+                                                        Content = "15.00"
+                                                    },
+
+                                                },
+                                                Rows = new List<Row>
+                                                {
+                                                    new Row
+                                                    {
+                                                        Fields = new List<FieldBase>
+                                                        {
+                                                            new TextField
+                                                            {
+                                                                Name = ScheduleSectionFieldNames.Description,
+                                                                Content = "Training"
+                                                            },
+                                                            new TextField
+                                                            {
+                                                                Name = ScheduleSectionFieldNames.Location,
+                                                                Content = "Training Center"
+                                                            },
+                                                        },
+                                                    }
+                                                }
+                                            },
+                                        }
+                                    },
+                                }
+							},
+
+                           //////////////
+                           new Row
+							{
+								Fields = new List<FieldBase>
+								{
+									new TextField
+									{
+										Name = ScheduleSectionFieldNames.DateDay,
+										Content = "Date Day 4 - Sunday, 22 January 2017"
+									},
+									new TextField
+									{
+										Name = ScheduleSectionFieldNames.Header1,
+										Content = "Session Type"
+									},
+									new TextField
+									{
+										Name = ScheduleSectionFieldNames.Header2,
+										Content = "Time"
+									},
+									new TextField
+									{
+										Name = ScheduleSectionFieldNames.Header3,
+										Content = "Post Deployment Track #4"
+									},
+								},
+								Rows = new List<Row>
+								{
+									new Row
+									{
+										Fields = new List<FieldBase>
+										{
+											new TextField
+											{
+												Name = ScheduleSectionFieldNames.Type,
+												Content = "General - D4",
+											}
+										},
+										Rows = new List<Row>
+										{
+											new Row
+											{
+												Fields = new List<FieldBase>
+												{
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.Start,
+														Content = "10:00"
+													},
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.End,
+														Content = "11:00"
+													},
+
+												},
+												Rows = new List<Row>
+												{
+													new Row
+													{
+														Fields = new List<FieldBase>
+														{
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Description,
+																Content = "Fitness"
+															},
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Location,
+																Content = "Director's Row I"
+															},
+														},
+													}
+												}
+											}
+										}
+									},
+                                     
+                                    new Row
+									{
+										Fields = new List<FieldBase>
+										{
+											new TextField
+											{
+												Name = ScheduleSectionFieldNames.Type,
+												Content = "Breakout #1"
+											},
+										},
+										Rows = new List<Row>
+										{
+											new Row
+											{
+												Fields = new List<FieldBase>
+												{
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.Start,
+														Content = "11.30"
+													},
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.End,
+														Content = "12.30"
+													},
+
+												},
+												Rows = new List<Row>
+												{
+													new Row
+													{
+														Fields = new List<FieldBase>
+														{
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Description,
+																Content = "Lunch"
+															},
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Location,
+																Content = "Grand Ballroom"
+															},
+														},
+													}
+												}
+											},
+										}
+									},
+                                 
+                                     new Row
+									{
+										Fields = new List<FieldBase>
+										{
+											new TextField
+											{
+												Name = ScheduleSectionFieldNames.Type,
+												Content = "Breakout #2"
+											},
+										},
+										Rows = new List<Row>
+										{
+											new Row
+											{
+												Fields = new List<FieldBase>
+												{
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.Start,
+														Content = "14.00"
+													},
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.End,
+														Content = "15.00"
+													},
+
+												},
+												Rows = new List<Row>
+												{
+													new Row
+													{
+														Fields = new List<FieldBase>
+														{
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Description,
+																Content = "Warrior Support Forum"
+															},
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Location,
+																Content = "Tower Court A"
+															},
+														},
+													}
+												}
+											},
+										}
+									},
+                                     new Row
+									{
+										Fields = new List<FieldBase>
+										{
+											new TextField
+											{
+												Name = ScheduleSectionFieldNames.Type,
+												Content = "General"
+                                            },
+										},
+										Rows = new List<Row>
+										{
+											new Row
+											{
+												Fields = new List<FieldBase>
+												{
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.Start,
+														Content = "16.00"
+													},
+													new TextField
+													{
+														Name = ScheduleSectionFieldNames.End,
+														Content = "17.00"
+													},
+
+												},
+												Rows = new List<Row>
+												{
+													new Row
+													{
+														Fields = new List<FieldBase>
+														{
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Description,
+																Content = "Emotional Cycles of Deployment"
+															},
+															new TextField
+															{
+																Name = ScheduleSectionFieldNames.Location,
+																Content = "Director's Row B"
+                                                            },
+														},
+													}
+												}
+											},
+										}
+									},                                 
 								}
 							},
 						}
@@ -940,17 +1196,68 @@ Director's Row B
              File.WriteAllBytes(downLoadPath + "\\AB_Schedule.docx", response);
              */
 
+
+                string strDateDayExpected = "Date Day 4 - Sunday, 22 January 2017";
+            string strTime1Expected = "10.00-11.00";
+            string strTime2Expected = "11.30-12.30";
+            string strSession1Expected = "General - D4";
+            string strSession2Expected = "Breakout #1";
+            string strDescp1Expected = "Fitness" + "\n" + "Director's Row I";
+            string strDescp2Expected = "Lunch" + "\n" + "Grand Ballroom";
+
+
+
             // retriving text from word based on location
             ScheduleTable s = new ScheduleTable();
-            string strDateDayActual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 3, 1, 1).Trim();
-            string strTimeActual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 3, 4, 1).Trim();
-            string strSessionActual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 3, 4, 2).Trim();
-            string strDescpActual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 3, 4, 3).Trim();
+            string strDateDayActual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 4, 1, 1).Trim();
+            string strTime1Actual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 4, 3, 1).Trim();
+            string strTime2Actual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 4, 4, 1).Trim();
+            string strSession1Actual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 4, 3, 2).Trim();
+            string strSession2Actual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 4, 4, 2).Trim();
+            string strDescpActual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 4, 3, 3).Trim();
+            string strDescp2Actual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 4, 4, 3).Trim();
 
             // ASSERT
             Assert.AreEqual(strDateDayExpected, strDateDayActual);
-            Assert.AreEqual(strTimeExpected, strTimeActual);
-            Assert.AreEqual(strSessionExpected, strSessionActual);
-            Assert.AreEqual(strDescpExpected, strDescpActual);
+            Assert.AreEqual(strTime1Expected, strTime1Actual);
+            Assert.AreEqual(strTime2Expected, strTime2Actual);
+            Assert.AreEqual(strSession1Expected, strSession1Actual);           
+            Assert.AreEqual(strSession2Expected, strSession2Actual);
+            Assert.AreEqual(strDescp1Expected, strDescp1Actual);
+            Assert.AreEqual(strDescp2Expected, strDescp2Actual);
+
+
+        }
+
+
+       /// <summary>
+       /// /////
+       /// </summary>
+
+
+
+
+        //serialize json
+        var json = restRequest.JsonSerializer.Serialize(agenda);
+             restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+             // ACT
+             IRestResponse restResponse = restClient.Execute(restRequest);
+             byte[] response = restClient.DownloadData(restRequest);
+             File.WriteAllBytes(downLoadPath + "\\AB_Schedule.docx", response);
+             */
+
+            // retriving text from word based on location
+            // String strDateDayExpectedActual = GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 0,0);
+
+            ScheduleTable s = new ScheduleTable();
+
+            String strDateDayActual = s.GetDataFromWord(downLoadPath + "\\AB_Schedule.docx", 2, 4, 3).Trim();
+            //   string s = " from dual union all ";
+            //  s = s.Trim().TrimEnd("union all".ToCharArray());
+
+            // ASSERT
+            Assert.AreEqual(strDateDayExpected, strDateDayActual);
+
 
         }
