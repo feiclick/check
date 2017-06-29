@@ -1,0 +1,284 @@
+using System;
+using System.Diagnostics;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
+using System.IO;
+using RestSharp;
+using System.Linq;
+using System.Text;
+using ASI.AB.Domain;
+using ASI.AB.Domain.Fields;
+using ASI.AB.Domain.Constants;
+using DocumentFormat.OpenXml.Wordprocessing;
+using DocumentFormat.OpenXml.Packaging;
+using Novacode;
+
+namespace ASI.AB.ApiTests
+{
+
+    [TestClass]
+    public class EmptySectionTests : TestHelper
+    {
+
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            String currentPath = System.IO.Directory.GetParent(System.IO.Directory.GetParent(Environment.CurrentDirectory).ToString()).ToString();
+            String strContainerFile = System.IO.Directory.GetParent(currentPath).ToString() +
+                                      "\\Docker\\WebApp\\containerIp.txt";
+
+            // path for storing template for testing
+            downLoadPath = currentPath + "\\Resourses\\EmptySection";
+
+            //string ipAddress = GetIp(strContainerFile);      
+
+            // setting the REST path for testing
+            //restClient = new RestClient($"http://{ipAddress}/");
+            restClient = new RestClient("http://172.30.114.136/");
+
+            restRequest = new RestRequest("agendabuilder/getagenda", Method.POST);
+        }
+
+
+        [TestMethod]
+        public void Validate_8_Empty_Pages()
+        {
+
+            restRequest.RequestFormat = DataFormat.Json;
+
+            string strHead1Expected = "This is Heading1 - Important Reminders";
+            string strHead2Expected = "This is Heading2 - Guest Speaker";
+            string strHead3Expected = "This is Heading3 - Hotel Map";
+            string strHead4Expected = "This is Heading4 - Childcare Hotel Map";
+            string strHead5Expected = "This is Heading5 - Breakout Descriptions 1";
+            string strHead6Expected = "This is Heading6 - Breakout Descriptions 2";
+            string strHead7Expected = "This is Heading7 - Helpful Websites";
+            string strHead8Expected = "This is Heading8 - Contact Information";
+
+            // request       
+
+            var agenda = new Agenda
+            {
+                Sections = new List<Domain.Section>
+                {
+                      new Domain.Section
+                      {
+                        TemplateId = TemplateId.Section0,
+                        Rows = new List<Domain.Row>
+                        {
+                            new Domain.Row
+                            {
+                                Fields = new List<FieldBase>
+                                {
+                                    new TextField
+                                    {
+                                        Name = SectionFieldNames.Name,
+                                        Content = "This is Heading1 - Important Reminders"
+                                    },
+                                }
+                            },
+                        }
+                      },
+
+
+
+                      new Domain.Section
+                      {
+                        TemplateId = TemplateId.Section0,
+                        Rows = new List<Domain.Row>
+                        {
+                            new Domain.Row
+                            {
+                                Fields = new List<FieldBase>
+                                {
+                                    new TextField
+                                    {
+                                        Name = SectionFieldNames.Name,
+                                        Content = "This is Heading2 - Guest Speaker"
+                                    },
+                                }
+                            },
+                        }
+                      },
+
+                    new Domain.Section
+                     {
+                        TemplateId = TemplateId.Section0,
+                        Rows = new List<Domain.Row>
+                        {
+                            new Domain.Row
+                            {
+                                Fields = new List<FieldBase>
+                                {
+                                    new TextField
+                                    {
+                                        Name = SectionFieldNames.Name,
+                                        Content = "This is Heading3 - Hotel Map"
+                                    },
+                                }
+                            },
+                        }
+                     },
+
+                      new Domain.Section
+                      {
+                        TemplateId = TemplateId.Section0,
+                        Rows = new List<Domain.Row>
+                        {
+                            new Domain.Row
+                            {
+                                Fields = new List<FieldBase>
+                                {
+                                    new TextField
+                                    {
+                                        Name = SectionFieldNames.Name,
+                                        Content = "This is Heading4 - Childcare Hotel Map"
+                                    },
+                                }
+                            },
+                        }
+                      },
+
+                   new Domain.Section
+                    {
+                        TemplateId = TemplateId.Section0,
+                        Rows = new List<Domain.Row>
+                        {
+                            new Domain.Row
+                            {
+                                Fields = new List<FieldBase>
+                                {
+                                    new TextField
+                                    {
+                                        Name = SectionFieldNames.Name,
+                                        Content = "This is Heading5 - Breakout Descriptions 1"
+                                    },
+                                }
+                            },
+                        }
+                    },
+
+                    new Domain.Section
+                      {
+                        TemplateId = TemplateId.Section0,
+                        Rows = new List<Domain.Row>
+                        {
+                            new Domain.Row
+                            {
+                                Fields = new List<FieldBase>
+                                {
+                                    new TextField
+                                    {
+                                        Name = SectionFieldNames.Name,
+                                        Content = "This is Heading6 - Breakout Descriptions 2"
+                                    },
+                                }
+                            },
+                        }
+                      },
+
+                     new Domain.Section
+                      {
+                        TemplateId = TemplateId.Section0,
+                        Rows = new List<Domain.Row>
+                        {
+                            new Domain.Row
+                            {
+                                Fields = new List<FieldBase>
+                                {
+                                    new TextField
+                                    {
+                                        Name = SectionFieldNames.Name,
+                                        Content = "This is Heading7 - Helpful Websites"
+                                    },
+                                }
+                            },
+                        }
+                      },
+
+                     new Domain.Section
+                      {
+                        TemplateId = TemplateId.Section0,
+                        Rows = new List<Domain.Row>
+                        {
+                            new Domain.Row
+                            {
+                                Fields = new List<FieldBase>
+                                {
+                                    new TextField
+                                    {
+                                        Name = SectionFieldNames.Name,
+                                        Content = "This is Heading8 - Contact Information"
+                                    },
+                                }
+                            },
+                        }
+                      },
+                }
+            };
+
+            //serialize json
+            var json = restRequest.JsonSerializer.Serialize(agenda);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+            // ACT
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            byte[] response = restClient.DownloadData(restRequest);
+            File.WriteAllBytes(downLoadPath + "\\EmptySection.docx", response);
+
+            // retriving text from word based on location     
+
+            string strHead1Actual = GetDataFromWord(downLoadPath + "\\EmptySection.docx", 1).Trim();
+            string strHead2Actual = GetDataFromWord(downLoadPath + "\\EmptySection.docx", 2).Trim();
+            string strHead3Actual = GetDataFromWord(downLoadPath + "\\EmptySection.docx", 3).Trim();
+            string strHead4Actual = GetDataFromWord(downLoadPath + "\\EmptySection.docx", 4).Trim();
+            string strHead5Actual = GetDataFromWord(downLoadPath + "\\EmptySection.docx", 5).Trim();
+            string strHead6Actual = GetDataFromWord(downLoadPath + "\\EmptySection.docx", 6).Trim();
+            string strHead7Actual = GetDataFromWord(downLoadPath + "\\EmptySection.docx", 7).Trim();
+            string strHead8Actual = GetDataFromWord(downLoadPath + "\\EmptySection.docx", 8).Trim();
+
+
+            // ASSERT
+            Assert.AreEqual(strHead1Expected, strHead1Actual);
+            Assert.AreEqual(strHead2Expected, strHead2Actual);
+            Assert.AreEqual(strHead3Expected, strHead3Actual);
+            Assert.AreEqual(strHead4Expected, strHead4Actual);
+            Assert.AreEqual(strHead5Expected, strHead5Actual);
+            Assert.AreEqual(strHead6Expected, strHead6Actual);
+            Assert.AreEqual(strHead7Expected, strHead7Actual);
+            Assert.AreEqual(strHead8Expected, strHead8Actual);
+
+
+        }
+    }
+
+
+    public class GetHeader
+    {
+        public static void getHeaderFromDocument(string filename)
+        {
+            Document mainDocument = doc.MainDocumentPart.Document;
+            using (WordprocessingDocument doc = WordprocessingDocument.Open(filename, false))
+            {
+                if (mainDocument.Descendants<HeaderReference>().Count() > 0)
+                    return;
+                /*
+                if (docPart.HeaderParts.Count() > 0)
+            {
+                var headers = document.Descendants<HeaderReference>().ToList();
+                foreach (var header in headers)
+                {
+            }
+            */
+
+            }
+
+
+        }
+
+    }
+
+
+
+}
