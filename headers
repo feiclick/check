@@ -1,0 +1,238 @@
+https://www.mindstick.com/blog/472/read-word-document-line-by-line-using-asp-dot-net-c-sharp-windows-application
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using DocumentFormat.OpenXml.Wordprocessing;
+using DocumentFormat.OpenXml.Packaging;
+using System.Diagnostics;
+using Novacode;
+using Microsoft.Office.Interop.Word;
+using System.IO;
+//using Docs;
+//using System.Web.UI.Page;
+//using Microsoft.Office.Interop.Word;
+//using System.Windows.Controls;
+
+namespace ConsoleApp1
+{
+    class Program
+    {
+           public static void Main()
+           {
+
+
+               string FilePath = @"E:\Resource\Template\";
+               string fileName = FilePath + "\\h.docx";
+
+               PrintHeader(fileName);
+
+           }
+
+           public static void PrintHeader(string filename)
+           {
+
+               // Given a document name, remove all of the headers and footers
+               // from the document.
+               using (WordprocessingDocument doc = WordprocessingDocument.Open(filename, false))
+               {
+                   MainDocumentPart mainDocumentPart = doc.MainDocumentPart;
+                   string Header = doc.MainDocumentPart.HeaderParts.ToString();
+                string docText = null;
+                // var Header2 = doc.MainDocumentPart.GetStream();
+                using (StreamReader sr = new StreamReader(doc.MainDocumentPart.GetStream()))
+
+                {
+                    docText = sr.ReadToEnd();
+                    Console.WriteLine(docText);
+
+                }
+
+                /*using (StreamWriter sw = new StreamWriter(doc.MainDocumentPart.GetStream()))
+                {
+                    sw.Write(docText);
+                    Console.Read();
+                } 
+                */
+                   Console.WriteLine(Header);
+                   Console.Read();
+               }
+           }
+     }
+}
+
+    
+    
+     //   public partial class ReadWordDocument
+        //: System.Web.UI.Page
+    //    {
+  /*          public static void Main()
+
+
+
+
+            {
+
+                Application wordApp = new Application();
+
+                // Input box is used to get the path of the file which has to be 
+                // uploaded into textbox.
+                string FilePath = @"E:\Resource\Template\";
+                object fileName = FilePath + "\\headers1.docx";
+
+                object nullobj = System.Reflection.Missing.Value;
+
+                // here on Document.Open there should be 9 arg.
+
+                Microsoft.Office.Interop.Word.Document doc = wordApp.Documents.Open(ref fileName,
+                                                      ref nullobj,
+                                                      ref nullobj,
+                                                      ref nullobj,
+                                                      ref nullobj,
+                                                      ref nullobj,
+                                                      ref nullobj,
+                                                      ref nullobj,
+                                                      ref nullobj,
+                                                      ref nullobj,
+                                                      ref nullobj,
+                                                      ref nullobj,
+                                                      ref nullobj,
+                                                      ref nullobj,
+                                                      ref nullobj,
+                                                      ref nullobj);
+
+                // Here the word content is copeied into a string which helps to
+                // store it into  textbox.
+
+                Microsoft.Office.Interop.Word.Document doc1 = wordApp.ActiveDocument;
+
+                string m = doc1.Content.Text;
+
+                // the content is stored into the textbox.
+
+                Console.WriteLine(m);
+                Console.Read();
+
+                doc.Close(ref nullobj, ref nullobj, ref nullobj);
+            }
+        }
+ //   }
+}
+*/
+
+
+//////////////////
+ /* using  GemBox.Document 
+ 
+    [TestMethod]
+  
+    public void Validate_Empty_Pages()
+    {
+
+        string sourceDocumentText = DocumentModel.Load(downLoadPath + "\\headers.docx").Content.ToString();
+
+        string destinationDocumentText = DocumentModel.Load(downLoadPath + "\\Destination.docx").Content.ToString();
+
+
+
+        string[] sourceTextLines = sourceDocumentText.Split(new char[] { '\n', '\r', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+
+        string[] destinationTextLines = destinationDocumentText.Split(new char[] { '\n', '\r', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+
+
+
+        for (int i = 0; i < sourceTextLines.Length; i++)
+
+        {
+
+            if (string.Equals(sourceTextLines[i], destinationTextLines[i]))
+
+                continue;
+
+            else
+
+            {
+
+                // Expose mismatched record in report format.
+
+            }
+
+        }
+    }
+    */
+       
+
+        public class GetHeader
+        {
+            public string getHeaderFromDocument(string path, int headerNumber)
+            {
+                //  Document mainDocument = doc.MainDocumentPart.Document;
+                // using (var document = WordprocessingDocument.Open(path, false))
+                using (WordprocessingDocument doc = WordprocessingDocument.Open(path, false))
+                {
+                    int hdrNumber = 0;
+
+                    // var docPart = document.MainDocumentPart;
+                    // var doc = docPart.Document;
+
+                    //  if (mainDocument.Descendants<HeaderReference>().Count() > 0)
+
+                    //Gets all the headers
+                    MainDocumentPart mainDocumentPart = doc.MainDocumentPart;
+
+                    for (int i = 0; i < doc.MainDocumentPart.HeaderParts.Count(); i++)
+                    {
+
+                        foreach (var headerPart in doc.MainDocumentPart.HeaderParts)
+                        {
+                            //Gets the text in headers
+                            foreach (var currentText in headerPart.RootElement.Descendants<Text>())                       
+
+                                {
+                                if (hdrNumber == headerNumber)
+                                    return currentText.ToString();
+
+                                hdrNumber++;
+                            }
+                        }
+
+                    }
+                    return hdrNumber.ToString();
+
+                }
+
+            }
+
+        }
+
+    }
+}
+            
+    
+    
+
+
+
+
+                /*
+                    WordprocessingDocument wrdDoc = WordprocessingDocument.Open(@"c:\test8\test.docx", false);
+                    MainDocumentPart mPart = wrdDoc.MainDocumentPart;
+                    mPart.HeaderParts.Count();
+                    HeaderPart hdr = mPart.HeaderParts.ToString;
+                    string rid = mPart.GetIdOfPart(HeaderPart);
+
+                    IEnumerable<HeaderPart> headerparts = mPart.HeaderParts;
+                    XmlDocument xdoc = new XmlDocument();
+                    foreach (HeaderPart var in headerparts)
+                    {
+                        xdoc.Load(var.GetStream());
+
+                        MessageBox.Show(xdoc.InnerXml.ToString());
+
+
+                    }
+                    */
+
+//////////////
