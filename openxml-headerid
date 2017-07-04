@@ -1,0 +1,112 @@
+using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using DocumentFormat.OpenXml.Wordprocessing;
+using DocumentFormat.OpenXml.Packaging;
+using System.Text;
+
+namespace readHeaders
+{
+    [TestClass]
+    public class Headers
+    {
+        public string testDocumentPath = @"E:\Resource\Template\";
+
+
+        [TestMethod]
+        public void TestMethod1()
+        {
+            getHeaders header = new getHeaders();
+
+            string strHeader1Expected = "H4";
+
+            string strHeader1Actual = header.GetHeaderfromWord(testDocumentPath + "headers1.docx", 1);
+
+            //assert
+            Assert.AreEqual(strHeader1Expected, strHeader1Actual);        
+
+        }
+    }
+
+
+    public class getHeaders
+    {
+        
+        //string testDocumentPath = @"E:\Resource\Template\";
+
+        string headerRelationshipId;
+        string headerType = "";
+        string returnTxt = "";
+
+        StringBuilder headerText = null;
+
+       // int pageCount = 0;
+        int num = 1;
+        
+
+        public string GetHeaderfromWord(string path, int pageNumber)
+        { 
+            using (WordprocessingDocument doc =
+             WordprocessingDocument.Open(path, false))
+            {
+                Document mainDocument = doc.MainDocumentPart.Document;
+                Body body = doc.MainDocumentPart.Document.Body;
+
+                /*  if (doc.ExtendedFilePropertiesPart.Properties.Pages.Text != null)
+                  {
+                      pageCount = Convert.ToInt32(doc.ExtendedFilePropertiesPart.Properties.Pages.Text);
+                  }
+              //    for (int i=0; i<=pageCount;i++)
+             //     {
+                      */
+
+                foreach (HeaderReference headerReference in
+                   mainDocument.Descendants<HeaderReference>())
+                    {
+                        // The headerReference element has an explicit relationship
+                        // with a Header part. Get the relationship id that points
+                        // to the header part.
+                        headerRelationshipId = headerReference.Id.Value;
+
+                        // Get the header's type from the headerReference
+                        // Type attribute.
+                        headerType = headerReference.Type.Value.ToString();
+
+                        // Get the header element from the Header part via the
+                        // explicit relationship id.
+                        Header header =
+                            ((HeaderPart)(doc.MainDocumentPart.GetPartById(headerRelationshipId))).Header;
+
+                        // Get the header text. The text could be spread across
+                        // multiple text runs so process all the text elements
+                        // that are descendants of the header element.
+                        headerText = new StringBuilder();
+
+                        //  foreach (Text text in header.Descendants<Text>())
+                        //   headerText.Append(text.InnerText);
+
+                        foreach (Text text in header.Descendants<Text>())
+                        {
+                            headerText.Append(text.InnerText);
+
+
+                        // Display the header relationship id, header type,
+                        // and header text.
+                        //"{0, 12} {1, -30} {2, -30}",headerRelationshipId, headerType,
+
+                        // Console.WriteLine(headerText);
+
+                        if (num == pageNumber)
+                            return headerText.ToString();
+                        else { num++; }
+                    }
+                  //  }
+                }             
+
+            }
+
+            return returnTxt;
+        }
+        
+    }
+
+}
