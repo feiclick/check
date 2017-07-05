@@ -1,0 +1,55 @@
+using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using DocumentFormat.OpenXml.Wordprocessing;
+using DocumentFormat.OpenXml.Packaging;
+using System.Text;
+
+
+namespace readHeaders
+{
+    [TestClass]
+    public class Headers
+    {
+        public string testDocumentPath = @"E:\Resource\";
+        
+
+        [TestMethod]
+        public void TestMethod1()
+        {
+            getHeaders header = new getHeaders();
+
+            string strHeader1Expected = "This is Heading1";
+
+            string strHeader1Actual = header.GetHeaderfromWord(testDocumentPath + "Headers.docx", 1);
+
+            //assert
+            Assert.AreEqual(strHeader1Expected, strHeader1Actual);
+            Console.WriteLine(strHeader1Actual);
+
+        }
+    }
+
+    public class getHeaders
+    {
+      public string s="";
+      public int num = 1;
+      public string GetHeaderfromWord(string path,int pageNumber)
+      {
+          using (WordprocessingDocument doc = WordprocessingDocument.Open(path, false))
+                {
+                    foreach (HeaderPart headerPart in doc.MainDocumentPart.HeaderParts)
+                    {
+                        foreach (Paragraph paragraph in headerPart.RootElement.Descendants<DocumentFormat.OpenXml.Wordprocessing.Paragraph>())
+                            foreach (Run run in paragraph.Descendants<DocumentFormat.OpenXml.Wordprocessing.Run>())
+                                foreach (Text text in run.Descendants<DocumentFormat.OpenXml.Wordprocessing.Text>())
+                                    if (num == pageNumber) { s = text.Text; break; }
+
+
+                        num++;
+                    }
+                }
+            return s;
+      }
+    }
+}
+
