@@ -1,0 +1,116 @@
+
+
+using System.Drawing;
+using ExternalDependencies.Helpers;
+using ExternalDependencies.Services.SchemaColors;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace ASI.AB.UnitTests.Services.SchemaColors
+{
+    [TestClass()]
+    public class DocumentColorSchemaBaseTests
+    {
+        private string originalColor = "#1D594D";
+        private Color _adjustedColor = Color.FromArgb(0, 74, 122, 112);
+
+        [TestMethod()]
+        public void ChangeColorBrightness_RevertChange_CompareWithOrigimalColorTest()
+        {
+            Color argbColor = Color.FromArgb(MailMergeHelper.ConvertHtmlColorToArgb(originalColor));
+            var calculatedColor = DocumentColorSchemaBase.ChangeColorBrightness(argbColor, (float) 0.2);
+            Assert.AreEqual(calculatedColor.R, _adjustedColor.R);
+            Assert.AreEqual(calculatedColor.G, _adjustedColor.G);
+            Assert.AreEqual(calculatedColor.B, _adjustedColor.B);
+        }
+    }
+}
+
+
+////////MaiMergeHelper///////////
+
+using System;
+using System.Globalization;
+
+namespace ExternalDependencies.Helpers
+{
+	public static class MailMergeHelper
+	{
+		public static int ConvertHtmlColorToArgb(string colorCode)
+		{
+			int color;
+			try
+			{
+				color = int.Parse(colorCode.Replace("#", ""), NumberStyles.HexNumber);
+			}
+			catch (Exception)
+			{
+				throw new ArgumentException($"The Color '{colorCode}' is not in a correct format.");
+			}
+
+			return color;
+		}
+	}
+}
+
+////////DocumentColorSchemaBase///////////
+
+using System.Drawing;
+using ExternalDependencies.Helpers;
+using Syncfusion.DocIO.DLS;
+
+namespace ExternalDependencies.Services.SchemaColors
+{
+    public abstract class DocumentColorSchemaBase
+    {
+        /// <summary>
+        /// Creates color with corrected brightness.
+        /// </summary>
+        /// <param name="color">Color to correct.</param>
+        /// <param name="correctionFactor">The brightness correction factor. Must be between -1 and 1. 
+        /// Negative values produce darker colors.</param>
+        /// <returns>
+        /// Corrected <see cref="Color"/> structure.
+        /// </returns>
+        public static Color ChangeColorBrightness(Color color, float correctionFactor)
+        {
+            float red = color.R;
+            float green = color.G;
+            float blue = color.B;
+
+            if (correctionFactor < 0)
+            {
+                correctionFactor = 1 + correctionFactor;
+                red *= correctionFactor;
+                green *= correctionFactor;
+                blue *= correctionFactor;
+            }
+            else
+            {
+                red = (255 - red) * correctionFactor + red;
+                green = (255 - green) * correctionFactor + green;
+                blue = (255 - blue) * correctionFactor + blue;
+            }
+
+            return Color.FromArgb(color.A, (int)red, (int)green, (int)blue);
+        }
+
+        public virtual void ApplyBackGroundColor(IWordDocument document, string color)
+        {
+            var templateSection = document.Sections[0];
+            if (templateSection.Tables.Count <= 0)
+            {
+                return;
+            }
+
+            var table = templateSection.Tables[0] as WTable;
+            if (table != null && !string.IsNullOrWhiteSpace(color))
+            {
+                table.TableFormat.BackColor = Color.FromArgb(MailMergeHelper.ConvertHtmlColorToArgb(color));
+            }
+        }
+    }
+}
+
+///////////
+
+
