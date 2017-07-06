@@ -1,0 +1,28 @@
+public class GetColor
+        {
+            public string GetColorfromWord(string path, int number)
+
+            {
+
+                using (WordprocessingDocument doc = WordprocessingDocument.Open(path, false))
+                {
+                    MainDocumentPart mainDocumentPart = doc.AddMainDocumentPart();
+                   
+
+                }
+
+            }
+
+        }
+
+
+        /*
+        <Document>
+        <Body>
+        <Paragraph>
+        <Run>
+        <RunProperty>
+        <Text>
+         */
+
+        ////////////////
