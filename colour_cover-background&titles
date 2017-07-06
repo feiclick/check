@@ -1,0 +1,97 @@
+  [TestMethod]
+        //validate the colour of Title2
+        public void API_validate_Color_Title2()
+        {
+            Logger.Info("Starting test" + "-------------------------------------------");
+            // ARRANGE
+            restRequest.RequestFormat = DataFormat.Json;
+            // Test string
+            String strMaintitleExpected = "Title 2";
+
+            // request          
+
+            var agenda = new Agenda
+            {
+
+                Sections = new List<Section>
+                {
+                    new Section
+                    {
+                        Color = "#4fc4bc",
+                        TemplateId = TemplateId.Cover0,
+                        Rows = new List<Row>
+                        {
+                            new Row
+                            {
+                                Fields = new List<FieldBase>
+                                {
+
+                                    new TextField
+                                    {
+                                        Name = CoverSectionFieldNames.MainTitle,
+                                        Content = "Main Title 1",
+                                    },
+                                    new TextField
+                                    {
+                                        Name = CoverSectionFieldNames.SubTitle1,
+                                        Content = "Sub Title 1",
+
+                                    },
+                                    new TextField
+                                    {
+                                        Name = CoverSectionFieldNames.SubTitle2,
+                                        Content = "Sub Title 2",
+                                    },
+                                    new TextField
+                                    {
+                                        Name = CoverSectionFieldNames.Title1,
+                                        Content = "Title 1",                                      
+                                    },
+                                    new TextField
+                                    {
+                                        Name = CoverSectionFieldNames.Title2,
+                                        Content = "Title 2",
+                                        Font = new Font
+                                        {
+                                            Color = "#070612"
+                                        }
+                                    },
+                                    new TextField
+                                    {
+                                        Name = CoverSectionFieldNames.Text1,
+                                        Content = "Text 1"
+                                    },
+                                    new TextField
+                                    {
+                                        Name = CoverSectionFieldNames.Text2,
+                                        Content = "Text 2"
+                                    },
+                                    new TextField
+                                    {
+                                        Name = CoverSectionFieldNames.Text3,
+                                        Content = "Text 3"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+
+
+            //serialize json
+            var json = restRequest.JsonSerializer.Serialize(agenda);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+            // ACT
+            restClient.Execute(restRequest);
+            byte[] response = restClient.DownloadData(restRequest);
+            File.WriteAllBytes(downLoadPath + "\\Color_Title2.docx", response);
+
+            // retriving text from word based on location
+            String strMainTitleActual = GetDataFromWord(downLoadPath + "\\Color_Title2.docx", 1).Trim();
+
+            // ASSERT
+            Assert.AreEqual(strMaintitleExpected, strMainTitleActual);
+        }
