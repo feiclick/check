@@ -1,0 +1,41 @@
+https://stackoverflow.com/questions/33569480/parse-colors-used-in-word-document-use-as-backcolor-for-listviewitem-wrong-co
+
+private void bkwParseColors_DoWork(object sender, DoWorkEventArgs e)
+{
+    var docItem = (string) e.Argument;
+    using (var docx = WordprocessingDocument.Open(docItem, false))
+    {
+        var ind = 0;
+        var maxnum = docx.MainDocumentPart.Document.Descendants<Run>().Count();
+        foreach (Run rText in docx.MainDocumentPart.Document.Descendants<Run>())
+        {
+            if (rText.RunProperties != null)
+            {
+                if (rText.RunProperties.Color != null)
+                {
+                    ind++;
+                    bkwParseColors.ReportProgress(100*ind/maxnum, rText.RunProperties.Color);
+                }
+            }
+        }
+    }
+}
+
+table cell - open xml:
+
+https://stackoverflow.com/questions/17675526/how-can-i-modify-the-foreground-and-background-color-of-an-openxml-tablecell
+
+color class in open xml
+https://msdn.microsoft.com/zh-cn/library/office/documentformat.openxml.wordprocessing.color.aspx 
+
+https://docx.codeplex.com/SourceControl/latest#UnitTests/DocXUnitTests.cs
+
+https://stackoverflow.com/questions/26131230/highlighting-text-in-docx-using-c-sharp/30141775#30141775
+http://www.c-sharpcorner.com/blogs/apply-fontsize-for-the-contents-inside-the-run-using-open-xml-sdk-20
+
+change color of word:
+https://stackoverflow.com/questions/31939457/openxml-c-change-color-of-a-word-in-wordprocessing 
+https://stackoverflow.com/questions/14145744/how-do-i-know-the-font-size-for-example-of-a-specific-piece-of-text-in-a-word
+
+cell
+https://stackoverflow.com/questions/10756206/getting-cell-backgroundcolor-in-excel-with-open-xml-2-0 
