@@ -1,0 +1,277 @@
+using System;
+using System.Collections.Generic;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ASI.AB.Domain;
+using ASI.AB.Domain.Fields;
+using ASI.AB.Domain.Constants;
+using RestSharp;
+using System.IO;
+
+namespace ASI.AB.ApiTests
+{
+
+    [TestClass]
+    public class EmptySectionTests : TestHelper
+    {
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+             String currentPath = System.IO.Directory.GetParent(System.IO.Directory.GetParent(Environment.CurrentDirectory).ToString()).ToString();
+             String strContainerFile = System.IO.Directory.GetParent(currentPath).ToString() + "\\Docker\\WebApp\\containerIp.txt";
+
+            // path for storing template for testing
+             downLoadPath = currentPath + "\\Resourses\\EmptySection";
+            
+             string ipAddress = GetIp(strContainerFile);      
+
+            // setting the REST path for testing
+             restClient = new RestClient($"http://{ipAddress}/");         
+             restRequest = new RestRequest("agendabuilder/getagenda", Method.POST);
+        }
+
+
+        [TestMethod]
+        public void API_Validate_Headers()
+        {
+            
+            restRequest.RequestFormat = DataFormat.Json;
+
+            string strHeader1Expected = "This is Heading1";
+            string strHeader2Expected = "This is Heading2";
+            string strHeader3Expected = "This is Heading3";
+            string strHeader4Expected = "This is Heading4";
+            string strHeader5Expected = "This is Heading5";
+            string strHeader6Expected = "This is Heading6";
+            string strHeader7Expected = "This is Heading7";
+            string strHeader8Expected = "This is Heading8";
+            
+            var agenda = new Agenda
+            {
+                Sections = new List<Domain.Section>
+                {
+                      new Domain.Section
+                      {
+                        TemplateId = TemplateId.Section0,
+                        Rows = new List<Domain.Row>
+                        {
+                            new Domain.Row
+                            {
+                                Fields = new List<FieldBase>
+                                {
+                                    new Domain.Fields.TextField
+                                    {
+                                        Name = SectionFieldNames.Name,
+                                        Content = strHeader1Expected
+                                    },
+                                }
+                            },
+                        }
+                      },
+                    new Domain.Section
+                    {
+                        TemplateId = TemplateId.Section0,
+                        Rows = new List<Domain.Row>
+                        {
+                            new Domain.Row
+                            {
+                                Fields = new List<FieldBase>
+                                {
+                                    new Domain.Fields.TextField
+                                    {
+                                        Name = SectionFieldNames.Name,
+                                        Content = strHeader2Expected
+                                    },
+                                }
+                            },
+                        }
+                    },
+                    new Domain.Section
+                    {
+                        TemplateId = TemplateId.Section0,
+                        Rows = new List<Domain.Row>
+                        {
+                            new Domain.Row
+                            {
+                                Fields = new List<FieldBase>
+                                {
+                                    new Domain.Fields.TextField
+                                    {
+                                        Name = SectionFieldNames.Name,
+                                        Content = strHeader3Expected
+                                    },
+                                }
+                            },
+                        }
+                    },
+                    new Domain.Section
+                    {
+                        TemplateId = TemplateId.Section0,
+                        Rows = new List<Domain.Row>
+                        {
+                            new Domain.Row
+                            {
+                                Fields = new List<FieldBase>
+                                {
+                                    new Domain.Fields.TextField
+                                    {
+                                        Name = SectionFieldNames.Name,
+                                        Content = strHeader4Expected
+                                    },
+                                }
+                            },
+                        }
+                    },
+                    new Domain.Section
+                    {
+                        TemplateId = TemplateId.Section0,
+                        Rows = new List<Domain.Row>
+                        {
+                            new Domain.Row
+                            {
+                                Fields = new List<FieldBase>
+                                {
+                                    new Domain.Fields.TextField
+                                    {
+                                        Name = SectionFieldNames.Name,
+                                        Content = strHeader5Expected
+                                    },
+                                }
+                            },
+                        }
+                    },
+                    new Domain.Section
+                    {
+                        TemplateId = TemplateId.Section0,
+                        Rows = new List<Domain.Row>
+                        {
+                            new Domain.Row
+                            {
+                                Fields = new List<FieldBase>
+                                {
+                                    new Domain.Fields.TextField
+                                    {
+                                        Name = SectionFieldNames.Name,
+                                        Content = strHeader6Expected
+                                    },
+                                }
+                            },
+                        }
+                    },
+                    new Domain.Section
+                    {
+                        TemplateId = TemplateId.Section0,
+                        Rows = new List<Domain.Row>
+                        {
+                            new Domain.Row
+                            {
+                                Fields = new List<FieldBase>
+                                {
+                                    new Domain.Fields.TextField
+                                    {
+                                        Name = SectionFieldNames.Name,
+                                        Content = strHeader7Expected
+                                    },
+                                }
+                            },
+                        }
+                    },
+                    new Domain.Section
+                    {
+                        TemplateId = TemplateId.Section0,
+                        Rows = new List<Domain.Row>
+                        {
+                            new Domain.Row
+                            {
+                                Fields = new List<FieldBase>
+                                {
+                                    new Domain.Fields.TextField
+                                    {
+                                        Name = SectionFieldNames.Name,
+                                        Content = strHeader8Expected
+                                    },
+                                }
+                            },
+                        }
+                    },
+                }
+            };
+
+            //serialize json
+            var json = restRequest.JsonSerializer.Serialize(agenda);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+            // ACT
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            byte[] response = restClient.DownloadData(restRequest);
+            File.WriteAllBytes(downLoadPath + "\\Headers.docx", response);
+
+            // retriving text from word based on location   
+
+            GetHeaders header = new GetHeaders();
+
+            string strHeader1Actual = header.GetFirstHeaderfromWord(downLoadPath + "\\Headers.docx", 1);
+            string strHeader2Actual = header.GetFirstHeaderfromWord(downLoadPath + "\\Headers.docx", 2);
+            string strHeader3Actual = header.GetFirstHeaderfromWord(downLoadPath + "\\Headers.docx", 3);
+            string strHeader4Actual = header.GetFirstHeaderfromWord(downLoadPath + "\\Headers.docx", 4);
+            string strHeader5Actual = header.GetFirstHeaderfromWord(downLoadPath + "\\Headers.docx", 5);
+            string strHeader6Actual = header.GetFirstHeaderfromWord(downLoadPath + "\\Headers.docx", 6);
+            string strHeader7Actual = header.GetFirstHeaderfromWord(downLoadPath + "\\Headers.docx", 7);
+            string strHeader8Actual = header.GetFirstHeaderfromWord(downLoadPath + "\\Headers.docx", 8);
+
+
+
+            //assert
+            Assert.AreEqual(strHeader1Expected, strHeader1Actual);
+            Assert.AreEqual(strHeader2Expected, strHeader2Actual);
+            Assert.AreEqual(strHeader3Expected, strHeader3Actual);
+            Assert.AreEqual(strHeader4Expected, strHeader4Actual);
+            Assert.AreEqual(strHeader5Expected, strHeader5Actual);
+            Assert.AreEqual(strHeader6Expected, strHeader6Actual);
+            Assert.AreEqual(strHeader7Expected, strHeader7Actual);
+            Assert.AreEqual(strHeader8Expected, strHeader8Actual);
+
+
+        }
+    }
+
+}
+
+
+
+        public class GetHeaders
+        {
+            public string GetFirstHeaderfromWord(string path, int pageNumber)
+            {
+                string s = "";
+                int num = 1;
+                using (WordprocessingDocument doc = WordprocessingDocument.Open(path, false))
+                {
+                    foreach (var sectionProperties in doc.MainDocumentPart.Document.Descendants<DocumentFormat.OpenXml.Wordprocessing.SectionProperties>())
+                    {
+                        if (num == pageNumber)
+                        {
+                            foreach (HeaderReference headerReference in sectionProperties.Descendants<HeaderReference>())
+                            {
+                                string headerRelationshipId = headerReference.Id.Value;
+
+                                var headerPart = (HeaderPart) (doc.MainDocumentPart.GetPartById(headerRelationshipId));
+
+                                foreach (Paragraph paragraph in headerPart.RootElement.Descendants<DocumentFormat.OpenXml.Wordprocessing.Paragraph>())
+                                foreach (Run run in paragraph.Descendants<DocumentFormat.OpenXml.Wordprocessing.Run>())
+                                foreach (Text text in run.Descendants<DocumentFormat.OpenXml.Wordprocessing.Text>())
+                                {
+                                    s = text.Text;
+                                    break;
+                                }
+                            }
+
+                            break;
+                        }
+
+                        num++;
+                    }
+                }
+                return s;
+            }
+        }
