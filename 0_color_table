@@ -1,0 +1,129 @@
+using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
+using System.Linq;
+
+namespace color
+{
+    [TestClass]
+    public class colorTest
+    {
+
+        public string downLoadPath = "";
+
+        [TestMethod]
+        public void TestMethod1()
+        {
+            downLoadPath = @"E:\API";
+
+            Getcolor color = new Getcolor();
+
+            string strColorBGExpected = "42225D";
+            string strColorT1Expected = "582F95";
+            string strColorT2Expected = "7030A0";
+            string strColorT4Expected = "ED7D31";
+
+            string strColorBGActual = color.GetColorFromWord(downLoadPath + "\\color.docx", 1, 1, 1).Trim();
+            string strColorT1Actual = color.GetColorFromWord(downLoadPath + "\\color.docx", 2, 1, 1).Trim();
+            string strColorT2Actual = color.GetColorFromWord(downLoadPath + "\\color.docx", 2, 2, 1).Trim();
+            string strColorT4Actual = color.GetColorFromWord(downLoadPath + "\\color.docx", 6, 1, 1).Trim();
+
+
+            Assert.AreEqual(strColorBGExpected, strColorBGActual);
+            Assert.AreEqual(strColorT1Expected, strColorT1Actual);
+            Assert.AreEqual(strColorT2Expected, strColorT2Actual);
+            Assert.AreEqual(strColorT4Expected, strColorT4Actual);
+
+
+
+
+        }
+    }
+
+
+    public class Getcolor
+    {
+        public string GetColorFromWord(String path, int tableNumber, int rowNumber, int cellNumber)
+        {
+            // Getting all data from word document                 
+           
+            using (WordprocessingDocument doc = WordprocessingDocument.Open(path, false))
+            {
+                int tnum = 0, rnum = 0, cnum = 0;
+
+                // Table tb = doc.MainDocumentPart.Document.Body.GetTables()[t];
+
+                var tbs = doc.MainDocumentPart.Document.Body.GetTables();
+
+                for (int t = 0; t < tbs.Length; t++)
+                {
+                    // table Rows
+                    var rows = tbs[t].GetTableRows();
+
+                    if (tnum == tableNumber - 1)
+                    {
+
+                        for (int i = 0; i < rows.Length; i++)
+                        {
+                            // table cells
+                            var cells = rows[i].GetTableCells();
+
+                            // show the content
+                            if (rnum == rowNumber - 1)
+                            {
+                                for (int j = 0; j < cells.Length; j++)
+                                {
+                                    if (cnum == cellNumber - 1)
+                                        return cells[j].GetTableCellProperty();
+                                    cnum++;
+                                }
+                            }
+                            rnum++;
+                        }
+                    }
+                    tnum++;
+                }
+                return tnum.ToString();
+            }
+        }
+    }
+
+    public static class DocxTableExt
+    {
+        public static Table[] GetTables(this Body body)
+        {
+            return body.Elements<Table>().ToArray();
+
+        }
+        public static TableRow[] GetTableRows(this Table tb)
+
+        {
+            return tb.Elements<TableRow>().ToArray();
+        }
+
+        public static TableCell[] GetTableCells(this TableRow tr)
+        {
+            return tr.Elements<TableCell>().ToArray();
+        }
+
+        public static string GetTableCellProperty(this TableCell tc)
+        {
+            return string.Join("\n", tc.Elements<TableCellProperties>().Select(o=> o.Shading.Fill));
+
+        }
+
+
+        /*
+        public static string GetTableCellContent(this TableCell tc)
+        {
+            return string.Join("\n", tc.Elements<Paragraph>().Select(o => o.InnerText).ToArray());
+
+        }
+        */
+
+    }
+
+
+
+}
