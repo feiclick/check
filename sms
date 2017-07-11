@@ -1,0 +1,25 @@
+Prerequisite:  should match with all requirements as below 
+    1. AFR hosted event with custom breakouts/sessions
+    2. approved registrants content to participate SMS evaluation in their  registration (at least one real cell phone is required for testing, e.g. QA  test cell phone)
+    3. attendance is marked for sessions
+    4. sessions are ongoing	
+
+
+1. Click on deployment phase of event ->Event Details page displayed
+2. Click on Evaluations tab in left pane ->Sub options expanded
+3. Click on Breakout SMS Evaluation  link -> Breakout SMS Evaluation page displayed
+4.
+Click  Breakout SMS Evaluation which is ready, or select multiple and click on Start  Breakout SMS Evaluation button 
+5.
+Verify in QA test cell phone ->Should receive selected Breakout SMS evaluations 
+6.Send response to EventPLUS -> Reponses sent
+
+7. Verify Progress column in Breakout SMS  Evaluation grid ->Should display {number of  responses received}/{total number of Breakout SMS Evaluations}
+
+8. Verify Breakout SMS Evaluation column in  Breakout SMS Evaluation grid ->Should display Completed as soon as all responses received
+9. Verify Report column in Breakout SMS  Evaluation grid ->Report button should be enabled
+10. Click on Report button ->Should be able to download SMS Event Evaluation Report
+11. Verify report ->Should display responses received for selected breakout/session
+12. Select multiple breakouts/sessions, and  click  on Export Report button ->Should be able to download SMS Event Evaluation Report
+13. Verify report -> Should display responses received per breakout/session, one under the  other
+14. 
