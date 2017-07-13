@@ -1,0 +1,6 @@
+make sure the styling on the pages are not broken (similar to regression).
+
+discuss on what specific areas and pages you can test, which is using those css files. 
+ 
+in the code level, test by running the gulp task "build-all-css" in the Visual studio Task Runner Explorer, 
+and monitor the physical folder /ASI.JSSN.WebUI/SASS/ to make sure the .css files and the .min.css files are generated and correspond to the sass files
