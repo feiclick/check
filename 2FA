@@ -1,0 +1,19 @@
+//////////////////////////////
+# run WinAuth
+& 'C:\Program Files\WinAuth-3.5.1\WinAuth.exe'
+
+# sendkey
+[System.Windows.Forms.SendKeys]::SendWait("{ALTOE}")
+
+# read authcode
+
+# save code to txt file
+
+
+# run simple diagnostics
+$ip = docker inspect -f "{{ .NetworkSettings.Networks.nat.IPAddress }}" agenda-builder-instance
+curl "http://" + $ip + "/home/get"
+echo "http://" + $ip + "/home/get"
+//////////////////////////////
+
+
