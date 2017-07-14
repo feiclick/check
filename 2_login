@@ -60,11 +60,19 @@ namespace CreatEvent_Dev1
             Assert.AreEqual("EventPLUS", driver.Title);
             driver.FindElement(By.LinkText("Staff Login")).Click();
             Assert.AreEqual("EventPLUS", driver.Title);
+
+            driver.FindElement(By.Id("ctl00_cphCenterColumn_ucLoginBox_btnAgree")).Click();
+            // driver.FindElement(By.Id("btnCacLogin")); CAC
+
+            
+             
+            //email login
             driver.FindElement(By.Id("ctl00_cphCenterColumn_ucLoginBox_txtEmail")).Clear();
             driver.FindElement(By.Id("ctl00_cphCenterColumn_ucLoginBox_txtEmail")).SendKeys("fxu@affinityempowering.com");
             driver.FindElement(By.Id("ctl00_cphCenterColumn_ucLoginBox_txtPassword")).Clear();
-            driver.FindElement(By.Id("ctl00_cphCenterColumn_ucLoginBox_txtPassword")).SendKeys("");
+            driver.FindElement(By.Id("ctl00_cphCenterColumn_ucLoginBox_txtPassword")).SendKeys("mypassword");
             driver.FindElement(By.Id("ctl00_cphCenterColumn_ucLoginBox_btnAgree")).Click();
+
             driver.FindElement(By.Id("btnLogin")).Click();
             Assert.AreEqual("EventPLUS", driver.Title);
 
