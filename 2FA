@@ -1,4 +1,17 @@
 //////////////////////////////
+https://winauth.com/winauth2/
+
+authenticator.xml
+-----------------
+
+winauth.exe [-min] [-p password] <authenticator-xml-file>
+
+where:
+-min to start WinAuth minimized
+-p is explicit password to decrypt authenticator
+<authenticator-xml-file> is the XML file containing your authenticator
+
+/////////powershell///////////////
 # run WinAuth
 & 'C:\Program Files\WinAuth-3.5.1\WinAuth.exe'
 
