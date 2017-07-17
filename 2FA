@@ -1,3 +1,9 @@
+https://www.codeproject.com/Articles/25983/How-to-Execute-a-Command-in-C
+System.Diagnostics.ProcessStartInfo procStartInfo =
+        new System.Diagnostics.ProcessStartInfo("cmd", "/c " + command);
+        
+        
+
 //////////////////////////////
 https://winauth.com/winauth2/
 
