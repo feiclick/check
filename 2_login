@@ -76,9 +76,19 @@ namespace CreatEvent_Dev1
             driver.FindElement(By.Id("btnLogin")).Click();
             Assert.AreEqual("EventPLUS", driver.Title);
 
-            //launch WinAuth.exe
 
+             /*
+            // Command to execute and arguments:
+            p.StartInfo.FileName = "c:\\path\\to\\executable.exe";
+            p.StartInfo.Arguments = "your argument string";
+             */
+              
+            //launch WinAuth.exe
+            System.Diagnostics.Process.Start("C:\\Program Files\\WinAuth-3.5.1\\WinAuth.exe","/secondary /username:myusername /password:mypassword");
+                            
             System.Diagnostics.Process.Start("C:\\Program Files\\WinAuth-3.5.1\\WinAuth.exe");
+            
+            
             SendKeys.Send("");
             Thread.Sleep(5000);
 
