@@ -1,3 +1,7 @@
+https://sqa.stackexchange.com/questions/7640/how-to-select-security-certificate-from-security-dialog
+cac
+
+
 https://www.codeproject.com/Articles/25983/How-to-Execute-a-Command-in-C
 System.Diagnostics.ProcessStartInfo procStartInfo =
         new System.Diagnostics.ProcessStartInfo("cmd", "/c " + command);
