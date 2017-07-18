@@ -7,10 +7,12 @@ using System.Threading;
 //using System.Windows.Forms;
 using NUnit.Framework;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Firefox;
+//using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using Assert = NUnit.Framework.Assert;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using OpenQA.Selenium.Chrome;
 
 namespace CreatEvent_Dev1
 {
@@ -36,7 +38,7 @@ namespace CreatEvent_Dev1
         public void TestInitialize()
         {
 
-            driver = new FirefoxDriver();
+            driver = new ChromeDriver();
             baseURL = "https://beta.yellowribbonevents.org/";
             verificationErrors = new StringBuilder();
 
@@ -62,18 +64,30 @@ namespace CreatEvent_Dev1
 
             driver.FindElement(By.Id("ctl00_cphCenterColumn_ucLoginBox_btnAgree")).Click();
             // driver.FindElement(By.Id("btnCacLogin")); CAC
-          
+
 
 
             //email login
             driver.FindElement(By.Id("ctl00_cphCenterColumn_ucLoginBox_txtEmail")).Clear();
             driver.FindElement(By.Id("ctl00_cphCenterColumn_ucLoginBox_txtEmail")).SendKeys("fxu@affinityempowering.com");
             driver.FindElement(By.Id("ctl00_cphCenterColumn_ucLoginBox_txtPassword")).Clear();
-            driver.FindElement(By.Id("ctl00_cphCenterColumn_ucLoginBox_txtPassword")).SendKeys("WoaiwojiA12345!@");    
+            driver.FindElement(By.Id("ctl00_cphCenterColumn_ucLoginBox_txtPassword")).SendKeys("WoaiwojiA12345!@");
             driver.FindElement(By.Id("btnLogin")).Click();
+         
+            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(5000));
             Assert.AreEqual("EventPLUS", driver.Title);
 
+            // https://beta.yellowribbonevents.org/Authenticate2FA.aspx
 
+            //driver.FindElement(By.Id("#txtVerificationCode")).SendKeys("768136");
+           // driver.FindElement(By.CssSelector("#txtVerificationCode")).SendKeys("851103");
+
+           driver.FindElement(By.CssSelector("div[id^'txtVerificationCode']")).SendKeys("727898");
+            
+            
+            //<div><input name="code" class="width282 ng-pristine ng-valid ng-valid-maxlength ng-touched" id="txtVerificationCode" autofocus="" type="text" maxlength="6" only-num="" ng-trim="true" ng-model="confirmationCode"></div>
+
+            driver.FindElement(By.Id("btnLogin")).Click();
 
             /*
            // Command to execute and arguments:
@@ -89,7 +103,7 @@ namespace CreatEvent_Dev1
 
             SendKeys.Send("");
             Thread.Sleep(5000);
-            */
+      
 
             //int number;
             driver.FindElement(By.Id("txtVerificationCode")).Clear();
@@ -99,7 +113,7 @@ namespace CreatEvent_Dev1
             driver.FindElement(By.Id("txtVerificationCode")).SendKeys($"{number}");
             driver.FindElement(By.Id("btnLogin")).Click();
             Assert.AreEqual("Event Listing", driver.Title);
-
+                  */
 
             bool IsElementPresent(By by)
             {
