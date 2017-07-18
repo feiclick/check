@@ -4,15 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Windows.Forms;
-using Microsoft.VisualStudio.TestTools.UITesting;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+//using System.Windows.Forms;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.UI;
 using Assert = NUnit.Framework.Assert;
-
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CreatEvent_Dev1
 {
@@ -21,7 +19,7 @@ namespace CreatEvent_Dev1
 
     public class OpenYRRP
     {
-        
+
         public IWebDriver driver;
         public StringBuilder verificationErrors;
         public string baseURL;
@@ -42,10 +40,11 @@ namespace CreatEvent_Dev1
             baseURL = "https://beta.yellowribbonevents.org/";
             verificationErrors = new StringBuilder();
 
+            /*
             String currentPath = System.IO.Directory.GetParent(System.IO.Directory.GetParent(Environment.CurrentDirectory).ToString()).ToString();
             string str2FAFile = System.IO.Directory.GetParent(currentPath) + "\\2FA\\WinAuth.txt";
             string authcode = Get2FA(str2FAFile);
-
+            */
 
         }
 
@@ -63,38 +62,41 @@ namespace CreatEvent_Dev1
 
             driver.FindElement(By.Id("ctl00_cphCenterColumn_ucLoginBox_btnAgree")).Click();
             // driver.FindElement(By.Id("btnCacLogin")); CAC
+          
 
-            
-             
+
             //email login
             driver.FindElement(By.Id("ctl00_cphCenterColumn_ucLoginBox_txtEmail")).Clear();
             driver.FindElement(By.Id("ctl00_cphCenterColumn_ucLoginBox_txtEmail")).SendKeys("fxu@affinityempowering.com");
             driver.FindElement(By.Id("ctl00_cphCenterColumn_ucLoginBox_txtPassword")).Clear();
-            driver.FindElement(By.Id("ctl00_cphCenterColumn_ucLoginBox_txtPassword")).SendKeys("mypassword");
-            driver.FindElement(By.Id("ctl00_cphCenterColumn_ucLoginBox_btnAgree")).Click();
-
+            driver.FindElement(By.Id("ctl00_cphCenterColumn_ucLoginBox_txtPassword")).SendKeys("WoaiwojiA12345!@");    
             driver.FindElement(By.Id("btnLogin")).Click();
             Assert.AreEqual("EventPLUS", driver.Title);
 
 
-             /*
-            // Command to execute and arguments:
-            p.StartInfo.FileName = "c:\\path\\to\\executable.exe";
-            p.StartInfo.Arguments = "your argument string";
-             */
-              
+
+            /*
+           // Command to execute and arguments:
+           p.StartInfo.FileName = "c:\\path\\to\\executable.exe";
+           p.StartInfo.Arguments = "your argument string";
+            
+
             //launch WinAuth.exe
-            System.Diagnostics.Process.Start("C:\\Program Files\\WinAuth-3.5.1\\WinAuth.exe","/secondary /username:myusername /password:mypassword");
-                            
+            System.Diagnostics.Process.Start("C:\\Program Files\\WinAuth-3.5.1\\WinAuth.exe", "/secondary /username:myusername /password:mypassword");
+
             System.Diagnostics.Process.Start("C:\\Program Files\\WinAuth-3.5.1\\WinAuth.exe");
-            
-            
+
+
             SendKeys.Send("");
             Thread.Sleep(5000);
+            */
 
-
+            //int number;
             driver.FindElement(By.Id("txtVerificationCode")).Clear();
-            driver.FindElement(By.Id("txtVerificationCode")).SendKeys($"{authcode}");
+            Console.WriteLine("Please enter");
+            string number = Console.ReadLine();
+
+            driver.FindElement(By.Id("txtVerificationCode")).SendKeys($"{number}");
             driver.FindElement(By.Id("btnLogin")).Click();
             Assert.AreEqual("Event Listing", driver.Title);
 
