@@ -1,0 +1,267 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using OpenQA.Selenium;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.IE;
+using OpenQA.Selenium.Remote;
+using OpenQA.Selenium.Support.Extensions;
+using OpenQA.Selenium.Support.UI;
+
+
+namespace EventPlusRegression
+{
+
+    [TestClass]
+
+    public class OpenYRRP
+    {
+
+        public IWebDriver driver;
+        // public StringBuilder verificationErrors;
+        public string baseURL;
+
+        public string addEvent;
+
+        private bool acceptNextAlert = true;
+
+        [TestInitialize]
+
+        public void TestInitialize()
+        {
+
+            driver = new ChromeDriver();
+
+            baseURL = "https://.........../";
+            // verificationErrors = new StringBuilder();
+            addEvent =
+                "https://......./Events/EventCreate.aspx?Mode=AddNew&Id=00000000-0000-0000-0000-000000000000#gridDlgDelegateInner-1_gridDlgDelegateJssInner-1";
+
+
+        }
+
+
+        [TestMethod]
+
+        public void Login()
+        {
+
+            
+            driver.Navigate().GoToUrl(baseURL + "/");
+            Assert.AreEqual("EventPLUS", driver.Title);
+            driver.FindElement(By.LinkText("Staff Login")).Click();
+            driver.FindElement(By.Id("ctl00_cphCenterColumn_ucLoginBox_btnAgree")).Click();
+
+
+            //cac
+            driver.FindElement(By.Id("btnCacLogin")).Click();
+
+            IJavaScriptExecutor js = driver as IJavaScriptExecutor;
+            js.ExecuteScript("window.onbeforeunload = null;");
+
+            Assert.AreEqual("Event Listing", driver.Title);
+            //((IJavaScriptExecutor)driver).ExecuteScript("window.confirm = function(msg) { return true; }");
+
+            // IAlert myAlert = driver.SwitchTo().Alert();          
+            // myAlert.Accept();  
+
+            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromMilliseconds(3000));
+
+            Alert handleAlert = new Alert();
+            handleAlert.HandleAlert(driver, wait);
+
+            // Create Event - MCR- During - Brewakout-Manual 
+            driver.Navigate().GoToUrl(addEvent + "/");
+            IWebElement createEvent = wait.Until(ExpectedConditions.ElementIsVisible(By.Id("postLoginInsideTitle")));
+
+            // Assert.AreEqual("Event Set Up", driver.FindElement(By.ClassName("event-title")));
+
+            new SelectElement(driver.FindElement(By.Id("ctl00_cphCenterColumn_ddlState"))).SelectByText("Alabama");
+            new SelectElement(driver.FindElement(By.Id("ctl00_cphCenterColumn_ddlSponsor")))
+                .SelectByText("Marine Corps Reserve");
+
+            IWebElement phase = wait.Until(ExpectedConditions.ElementIsVisible(By.Id("3ed5967d-a38f-4d0f-9cff-f4f5dcfde928"))); //Pre-Deployment phase
+
+            driver.FindElement(By.Id("3ed5967d-a38f-4d0f-9cff-f4f5dcfde928")).Click(); //Pre-Deployment
+
+            driver.FindElement(By.Id("ctl00_cphCenterColumn_txtUnitUic")).Clear();
+            driver.FindElement(By.Id("ctl00_cphCenterColumn_txtUnitUic")).SendKeys("W857Y1");
+
+            //EventName -AFR
+            // driver.FindElement(By.Id("ctl00_cphCenterColumn_txtAfrUnit")).Clear();
+            // driver.FindElement(By.Id("ctl00_cphCenterColumn_txtAfrUnit")).SendKeys("July21_Test");
+
+
+            //start date
+            IWebElement startdate =
+                wait.Until(ExpectedConditions.ElementIsVisible(By.Id("ctl00_cphCenterColumn_dtpStartDate_txtDate")));
+
+            driver.FindElement(By.Id("ctl00_cphCenterColumn_dtpStartDate_txtDate")).Click();
+            WebDriverWait wait3 = new WebDriverWait(driver, TimeSpan.FromMilliseconds(2000));
+            driver.FindElement(By.LinkText("22")).Click();
+           
+
+            //end date
+            IWebElement endtime =
+                wait.Until(ExpectedConditions.ElementIsVisible(By.Id("ctl00_cphCenterColumn_dtpEndDate_txtDate")));
+            driver.FindElement(By.Id("ctl00_cphCenterColumn_dtpEndDate_txtDate")).Click();
+
+            WebDriverWait wait4 = new WebDriverWait(driver, TimeSpan.FromMilliseconds(2000));
+            driver.FindElement(By.LinkText("25")).Click();
+
+
+            //Register by
+            driver.FindElement(By.Id("ctl00_cphCenterColumn_dtpRegisterByDate_txtDate")).Click();
+            WebDriverWait wait5 = new WebDriverWait(driver, TimeSpan.FromMilliseconds(2000));
+            driver.FindElement(By.LinkText("24")).Click();
+
+       
+            //Display from -optional
+            // driver.FindElement(By.Id("ctl00_cphCenterColumn_dtpDisplayFromDate_txtDate")).Click();
+            // driver.FindElement(By.LinkText("22")).Click();
+
+            //Zip
+            driver.FindElement(By.Id("ctl00_cphCenterColumn_ucAddress_txtZip")).Clear();
+            driver.FindElement(By.Id("ctl00_cphCenterColumn_ucAddress_txtZip")).SendKeys("53210");
+            driver.FindElement(By.Id("ctl00_cphCenterColumn_ucAddress_btnLoadZip")).Click();
+            WebDriverWait wait6 = new WebDriverWait(driver, TimeSpan.FromMilliseconds(2000));
+
+            //Delegate MSC FRO user
+
+
+            driver.FindElement(By.Id("ctl00_cphCenterColumn_rbDelegateRolesY")).Click();
+            new SelectElement(driver.FindElement(By.Id("ctl00_cphCenterColumn_ddlDelegateRoles"))).SelectByText("Add Co-Owner Roles");
+            driver.FindElement(By.Id("ctl00_cphCenterColumn_btnDelegateRoles")).Click();
+            new SelectElement(driver.FindElement(By.Id("ctl00_cphCenterColumn_ddlRoles"))).SelectByText("MSC FRO");
+            driver.FindElement(By.CssSelector("option[value=\"6e9fdbd0-0b22-4cc2-a8b7-d38fb9deb19c\"]")).Click();
+            driver.FindElement(By.Id("ctl00_cphCenterColumn_btnSearchUsers")).Click();
+            driver.FindElement(By.Id("checkbox_ctl00_cphCenterColumn_gridDlgDelegateInner_IsDelegated_0")).Click();
+            driver.FindElement(By.Id("ctl00_cphCenterColumn_btnDelegate")).Click();
+
+
+            //Breakout
+
+            driver.FindElement(By.XPath("(//button[@type='button'])[4]")).Click();
+            driver.FindElement(By.Id("ctl00_cphCenterColumn_TabControl1_TabStrip_1")).Click();
+            driver.FindElement(By.XPath("//input[@value='Add Breakout/Agenda']")).Click();
+            driver.FindElement(By.CssSelector("input.width450.float-left")).Clear();
+            driver.FindElement(By.CssSelector("input.width450.float-left")).SendKeys("Breakout/Agenda 1 -MSC");
+            driver.FindElement(By.CssSelector("label > input[type=\"checkbox\"]")).Click();
+            driver.FindElement(By.XPath("//input[@value='Add Session']")).Click();
+            driver.FindElement(By.XPath("//input[@value='Add Breakout/Agenda']")).Click();
+            driver.FindElement(By.XPath("(//input[@type='text'])[33]")).Clear();
+            driver.FindElement(By.XPath("(//input[@type='text'])[33]")).SendKeys("Breakout/Agenda 2 - MSC");
+            driver.FindElement(By.Id("ctl00_cphCenterColumn_btnBreakoutsNext")).Click();
+            driver.FindElement(By.Id("ctl00_cphCenterColumn_TabControl1_TabStrip_2")).Click();
+            driver.FindElement(By.Id("ctl00_cphCenterColumn_btnCancel")).Click();
+
+            Assert.IsTrue(Regex.IsMatch(CloseAlertAndGetItsText(), "^Are you sure you want to cancel changes[\\s\\S]$"));
+            Assert.AreEqual("Event Listing", driver.Title);
+
+
+
+
+
+
+            //cancel 
+            driver.FindElement(By.Id("ctl00_cphCenterColumn_btnCancel")).Click();
+
+            //publish
+           // driver.FindElement(By.Id("ctl00_cphCenterColumn_btnPublish")).Click();
+        }
+
+        
+
+
+
+        /*
+     *breakouts/Agenda
+
+//next
+driver.FindElement(By.XPath("(//button[@type='button'])[4]")).Click();
+
+
+//wait till 
+IWebElement element2 = wait.Until(ExpectedConditions.ElementIsVisible(By.Id("btnBreakoutSetupMethod")));
+driver.FindElement(By.Id("btnBreakoutSetupMethod")).Click();
+driver.FindElement(By.XPath("//input[@value='Add Breakout/Agenda']")).Click();
+
+//wait till the breakouts show up
+IWebElement breakout =
+    wait.Until(ExpectedConditions.ElementIsVisible(By.Id("ctl00_cphCenterColumn_BreakoutList")));
+
+
+//driver.FindElement(By.Id("rdBreakoutSetupMethodManual")).Click();
+
+driver.FindElement(By.CssSelector("input[class='btn btn-green addItem']"));
+
+
+driver.FindElement(By.CssSelector("label > input[type=\"checkbox\"]")).Click();
+
+driver.FindElement(By.Id("ctl00_cphCenterColumn_btnBreakoutsNext")).Click();
+// driver.FindElement(By.Id("ctl00_cphCenterColumn_TabControl1_TabStrip_2")).Click();
+*/
+        //*[@id="divPublish"]/div/div[1]/div
+
+
+        public class Alert
+        {
+            public void HandleAlert(IWebDriver driver, WebDriverWait wait)
+            {
+                if (wait == null)
+                {
+                    wait = new WebDriverWait(driver, TimeSpan.FromSeconds(5));
+                }
+
+                try
+                {
+                    IAlert alert = wait.Until(drv => {
+                        try
+                        {
+                            return drv.SwitchTo().Alert();
+                        }
+                        catch (NoAlertPresentException)
+                        {
+                            return null;
+                        }
+                    });
+                    alert.Accept();
+                }
+                catch (WebDriverTimeoutException) { /* Ignore */ }
+            }
+
+        }
+
+        // keep it for cancel event -testing
+        private string CloseAlertAndGetItsText()
+        {
+            try
+            {
+                IAlert alert = driver.SwitchTo().Alert();
+                string alertText = alert.Text;
+                if (acceptNextAlert)
+                {
+                    alert.Accept();
+                }
+                else
+                {
+                    alert.Dismiss();
+                }
+                return alertText;
+            }
+            finally
+            {
+                acceptNextAlert = true;
+            }
+        }
+
+    }
+
+
+
+
+}
