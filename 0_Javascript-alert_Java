@@ -1,3 +1,25 @@
+http://www.cnblogs.com/joewu/p/3718721.html
+String current_handle = driver.getWindowHandle();
+
+
+Thread.sleep(5000);
+driver.switchTo().activeElement();
+
+driver.switchTo().defaultContent();
+driver.findElement(By.active())
+
+
+////////
+driver.SwitchTo().Frame(driver.FindElementById("frameid"));
+driver.FindElement(By.Id("dialog-icon-close")).Click();
+driver.SwitchTo().DefaultContent();
+//////////
+
+
+switch handle：
+http://www.cnblogs.com/joewu/p/3718721.html 
+http://blog.csdn.net/aerchi/article/details/8048856
+
 import java.util.Iterator;
 import java.util.Set;
 
