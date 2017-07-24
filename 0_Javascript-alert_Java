@@ -61,3 +61,85 @@ public boolean dealPotentialAlert(WebDriver driver,boolean option) {
     }  
     return flag;  
 }  
+
+///////////////
+
+http://www.diggerplus.org/archives/920
+
+1、alert弹框
+
+这种弹出框处理应该毫无难度，网上也有很多介绍的，这边提供一个方法，见代码
+程序清单
+//处理潜在的1个alert（javascript弹出框）
+public boolean dealPotentialAlert(WebDriver driver,boolean option) {
+//是否存在
+boolean flag = false;
+//异常捕获
+try {
+    Alert alert = driver.switchTo().alert();
+    //判断是否存在alert弹框
+    if (null == alert){
+        throw new NoAlertPresentException();
+    }
+    //异常捕获
+    try {
+        //确认or取消
+        if (option) {
+            //确认
+            alert.accept();
+            System.out.println("Accept the alert: " + alert.getText());
+        } else {
+            //取消
+            alert.dismiss();
+            System.out.println("Dismiss the alert: " + alert.getText());
+        }
+        flag = true;
+    } catch (WebDriverException e) {
+        if (e.getMessage().startsWith("Could not find")){
+            System.out.println("There is no alert appear!");
+        }else{
+            throw e;
+        }
+    }
+} catch (NoAlertPresentException e) {
+    System.out.println("There is no alert appear!");
+}
+return flag;
+}
+2、非alert弹框
+
+不管是JS自定义的弹出框还是windows弹出框，下面给出的方法都能准确定位
+//处理多个非alert弹窗
+public static boolean testNewWindows(WebDriver driver){
+//当前窗口句柄
+String currentHandle = driver.getWindowHandle();
+//得到所有窗口的句柄
+Set handles = driver.getWindowHandles();
+//不包括当前窗口
+handles.remove(currentHandle);
+//存在窗口
+if (handles.size() > 0) {
+    try{
+    //定位窗口
+        dr.switchTo().window(handles.iterator().next());
+        return true;
+    }catch(Exception e){
+        System.out.println(e.getMessage());
+        return false;
+    }
+}
+System.out.println("Did not find window");
+return false;
+}
+
+//处理单个非alert弹窗
+public static boolean testNewWindow(WebDriver driver){
+    try{
+        //定位窗口
+        driver.switchTo().window(driver.getWindowHandles().iterator().next());
+        return true;
+    }catch(Exception e){
+        System.out.println(e.getMessage());
+        return false;
+    }
+}
