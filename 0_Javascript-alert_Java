@@ -1,0 +1,63 @@
+import java.util.Iterator;
+import java.util.Set;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+public class PopupWindowTest {
+        public static void main(String[] args) {
+            System.setProperty("webdriver.firefox.bin","D:\\Program Files\\Mozilla Firefox\\firefox.exe"); 
+            WebDriver dr = new FirefoxDriver();
+            String url ="\\Your\\Path\\to\\main.html";
+            dr.get(url);
+            dr.findElement(By.id("51")).click();
+
+            //得到当前窗口的句柄
+            String currentWindow = dr.getWindowHandle();
+            //得到所有窗口的句柄
+            Set<String> handles = dr.getWindowHandles();
+
+            Iterator<String> it = handles.iterator();
+            while(it.hasNext()){
+                String handle = Iter.next();
+                if(currentWindow.equals(handle)) continue;
+                WebDriver window = dr.switchTo().window(handle);
+                System.out.println("title,url = "+window.getTitle()+","+window.getCurrentUrl());
+            }
+        }
+
+}
+
+
+//////////////////////////
+JAVA:
+方法返回值为，调用出是否出现了alert。 
+参数列表中第二个参数option为期望对alert的处理方式（true:ok/false:cancle) 
+
+public boolean dealPotentialAlert(WebDriver driver,boolean option) {  
+    boolean flag = false;  
+    try {  
+        Alert alert = driver.switchTo().alert();  
+        if (null == alert)  
+            throw new NoAlertPresentException();  
+        try {  
+            if (option) {  
+                alert.accept();  
+                System.out.println("Accept the alert: " + alert.getText());  
+            } else {  
+                alert.dismiss();  
+                System.out.println("Dismiss the alert: " + alert.getText());  
+            }  
+            flag = true;  
+        } catch (WebDriverException ex) {  
+            if (ex.getMessage().startsWith("Could not find"))  
+                System.out.println("There is no alert appear!");  
+            else  
+                throw ex;  
+        }  
+    } catch (NoAlertPresentException e) {  
+        System.out.println("There is no alert appear!");  
+    }  
+    return flag;  
+}  
