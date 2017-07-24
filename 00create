@@ -62,6 +62,9 @@ namespace EventPlusRegression
 
             IJavaScriptExecutor js = driver as IJavaScriptExecutor;
             js.ExecuteScript("window.onbeforeunload = null;");
+            
+            //IJavaScriptExecutor js = driver as IJavaScriptExecutor;
+            //string title = (string)js.ExecuteScript("return document.title");
 
             Assert.AreEqual("Event Listing", driver.Title);
             //((IJavaScriptExecutor)driver).ExecuteScript("window.confirm = function(msg) { return true; }");
