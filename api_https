@@ -1,0 +1,29 @@
+var client = new RestClient("http://www.example.com/1/2");
+var request = new RestRequest();
+
+request.Method = Method.POST;
+request.AddHeader("Accept", "application/json");
+request.Parameters.Clear();
+request.AddParameter("application/json", body , ParameterType.RequestBody);
+
+var response = client.Execute(request);
+var content = response.Content; // raw content as string  
+///////////
+
+
+https://github.com/restsharp/RestSharp/blob/master/RestSharp.Tests/JsonTests.cs 
+
+https://github.com/restsharp/RestSharp/tree/master/RestSharp.Tests
+
+http://www.qxqzx.com/contents/470.html example
+http://www.cnblogs.com/leo_wl/archive/2012/01/27/2330272.html restsharp example
+
+
+webapi- multipart, form data 
+http://blog.csdn.net/starfd/article/details/45393089 
+
+HttpWebRequest & HttpWebResponse
+https://www.codeproject.com/Articles/6554/How-to-use-HttpWebRequest-and-HttpWebResponse-in-N 
+
+c# MVC 
+http://blog.csdn.net/wyljz/article/details/52065890
