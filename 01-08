@@ -66,19 +66,28 @@ public void TestInitialize()
 }
 
 ////////////
- public string personaldetail(string 1, string,string, string, string, string)
+https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/enum
+
+        public class personaldetail(string DodId, string MilitaryComponentTypeId, string StateTypeId, string Unit, string Email, string IsFirstResponder)
         {
-            string a = "";
-            string DodId = 1;
-            string MilitaryComponentTypeId = 2;
-            string StateTypeId = 3;
-            string Unit = 4;
-            string Email = 5;
-            string IsFirstResponder = 6;
+            enum lang
+            {
+            DodId = 1,
+                MilitaryComponentTypeId =2,
+                StateTypeId =3,
+                Unit =4,
+
+        }
+            string dod = DodId;
+            string m = MilitaryComponentTypeId;
+            string s = StateTypeId;
+            string u = Unit;
+            string e = Email;
+            string fr = IsFirstResponder;
 
         }
 
         {
-          return a;
-          
+            return dod;
         }
+        
