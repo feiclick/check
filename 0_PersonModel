@@ -1,0 +1,42 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using ASI.CEI.Core.Entities;
+
+namespace ASI.CEI.Domain.DomainObjects.Cei
+{
+	public class PersonModel : BusinessObject
+	{
+		[Required, MinLength(10), MaxLength(10), RegularExpression("[0-9]+", ErrorMessage = "The field DodId should be Numeric.")]
+		public string DodId { get; set; }
+		[Required]
+		public Guid MilitaryComponentTypeId { get; set; }
+		[Required]
+		public Guid StateTypeId { get; set; }
+		[Required, MaxLength(50)]
+		public string Unit { get; set; }
+		public bool IsFirstResponder { get; set; }
+		public bool IsCreateAccount { get; set; }
+		[Required, MaxLength(100), EmailAddress]
+		public string Email { get; set; }
+
+		protected override IEnumerable<ValidationResult> CustomValidate()
+		{
+			var validationResults = new List<ValidationResult>();
+
+			// validate MilitaryComponentTypeId
+			if (MilitaryComponentTypeId.Equals(Guid.Empty))
+			{
+				validationResults.Add(new ValidationResult(string.Format(Constants.Constants.RequiredFieldMessage, "MilitaryComponentTypeId")));
+			}
+
+			// validate StateTypeId
+			if (StateTypeId.Equals(Guid.Empty))
+			{
+				validationResults.Add(new ValidationResult(string.Format(Constants.Constants.RequiredFieldMessage, "StateTypeId")));
+			}
+
+			return validationResults;
+		}
+	}
+}
