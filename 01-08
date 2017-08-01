@@ -1,0 +1,84 @@
+ namespace ASI.CEI.APITests
+ {
+ [TestClass]
+ public class CeiApiTests
+    {
+        public RestClient restClient;
+        public RestRequest restRequest;
+
+public void TestInitialize()
+        {
+            restClient = new RestClient("http://cei-test.jss.org/");
+            restRequest = new RestRequest("api/cei/submit/", Method.POST);
+        }
+  
+  [TestMethod]
+        //1. API_PersonalDetails_Service Component_is required
+        public void API_without_ServiceComponent_Validation_message_should_displayed()
+        {
+            restRequest.RequestFormat = DataFormat.Json;
+
+            //request
+            var cei = new CeiModel
+            {
+                PersonalDetails = new PersonModel
+                {
+                    DodId = "0123456789",                 
+                    StateTypeId = StateType.Constants.AlabamaId,
+                    Unit = "SomeUnit",
+                    Email = "some@email.com",
+                    IsFirstResponder = false
+                },
+                Employment = new List<EmploymentModel>
+                {
+					new PartTimeEmploymentModel
+					{
+						SocCode = "SocCode",
+						EmploymentTypeId = EmploymentType.Constants.PartTimeId,
+						CountryTypeId = CountryType.Constants.USAId,
+						StateTypeId = StateType.Constants.AlabamaId,
+						IsSelfEmployed = false,
+						YourPosition = "SomePosition",
+						IsCurrentPosition = false,
+						DatePositionBegan = DateTime.UtcNow,
+						DatePositionEnd = DateTime.UtcNow,
+						EmployerName = "EmployerName",
+						EmployerAddress = "EmployerAddress",
+						EmployerAddress2 = "EmployerAddress2",
+						EmployerCity = "EmployerCity",
+						EmployerZipCode = "12345"
+					}
+
+				}
+			};
+
+            var json = restRequest.JsonSerializer.Serialize(cei);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            var resultdata = restResponse.Content;
+
+            //assert
+            Assert.AreEqual(HttpStatusCode.BadRequest, restResponse.StatusCode);
+            StringAssert.Contains(resultdata, "The MilitaryComponentTypeId field is required.");
+
+        }
+   }
+}
+
+////////////
+ public string personaldetail(string 1, string,string, string, string, string)
+        {
+            string a = "";
+            string DodId = 1;
+            string MilitaryComponentTypeId = 2;
+            string StateTypeId = 3;
+            string Unit = 4;
+            string Email = 5;
+            string IsFirstResponder = 6;
+
+        }
+
+        {
+          return a;
+          
+        }
