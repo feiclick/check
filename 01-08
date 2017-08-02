@@ -1,56 +1,56 @@
- namespace ASI.CEI.APITests
- {
- [TestClass]
- public class CeiApiTests
+using System;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace ASI.CEI.APITests
+{
+    [TestClass]
+    public class CeiApiTests
     {
         public RestClient restClient;
         public RestRequest restRequest;
 
-public void TestInitialize()
+        public void TestInitialize()
         {
             restClient = new RestClient("http://cei-test.jss.org/");
             restRequest = new RestRequest("api/cei/submit/", Method.POST);
         }
-  
-  [TestMethod]
+
+        [TestMethod]
         //1. API_PersonalDetails_Service Component_is required
         public void API_without_ServiceComponent_Validation_message_should_displayed()
         {
             restRequest.RequestFormat = DataFormat.Json;
 
+            a = PersonalDetail()
+
             //request
             var cei = new CeiModel
             {
-                PersonalDetails = new PersonModel
-                {
-                    DodId = "0123456789",                 
-                    StateTypeId = StateType.Constants.AlabamaId,
-                    Unit = "SomeUnit",
-                    Email = "some@email.com",
-                    IsFirstResponder = false
-                },
+                {a; },
+            
                 Employment = new List<EmploymentModel>
                 {
-					new PartTimeEmploymentModel
-					{
-						SocCode = "SocCode",
-						EmploymentTypeId = EmploymentType.Constants.PartTimeId,
-						CountryTypeId = CountryType.Constants.USAId,
-						StateTypeId = StateType.Constants.AlabamaId,
-						IsSelfEmployed = false,
-						YourPosition = "SomePosition",
-						IsCurrentPosition = false,
-						DatePositionBegan = DateTime.UtcNow,
-						DatePositionEnd = DateTime.UtcNow,
-						EmployerName = "EmployerName",
-						EmployerAddress = "EmployerAddress",
-						EmployerAddress2 = "EmployerAddress2",
-						EmployerCity = "EmployerCity",
-						EmployerZipCode = "12345"
-					}
+                    new PartTimeEmploymentModel
+                    {
+                        SocCode = "SocCode",
+                        EmploymentTypeId = EmploymentType.Constants.PartTimeId,
+                        CountryTypeId = CountryType.Constants.USAId,
+                        StateTypeId = StateType.Constants.AlabamaId,
+                        IsSelfEmployed = false,
+                        YourPosition = "SomePosition",
+                        IsCurrentPosition = false,
+                        DatePositionBegan = DateTime.UtcNow,
+                        DatePositionEnd = DateTime.UtcNow,
+                        EmployerName = "EmployerName",
+                        EmployerAddress = "EmployerAddress",
+                        EmployerAddress2 = "EmployerAddress2",
+                        EmployerCity = "EmployerCity",
+                        EmployerZipCode = "12345"
+                    }
 
-				}
-			};
+                }
+            };
 
             var json = restRequest.JsonSerializer.Serialize(cei);
             restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
@@ -62,32 +62,38 @@ public void TestInitialize()
             StringAssert.Contains(resultdata, "The MilitaryComponentTypeId field is required.");
 
         }
-   }
+
+
+        public string PersonalDetail(string dod, string state, string unit, string email, string responder)
+        {
+            string a = new PersonModel
+            {
+                DodId = dod;
+            StateTypeId = state;
+            Unit = unit;
+            Email = email;
+            IsFirstResponder = responder;
+        }
+           
+         
+            
+  
+     }
+          
+           return a;
+        }
+
+
+           
+        
+                
+             
+       
+    }
 }
 
 ////////////
-https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/enum
+//https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/enum
+    
 
-        public class personaldetail(string DodId, string MilitaryComponentTypeId, string StateTypeId, string Unit, string Email, string IsFirstResponder)
-        {
-            enum lang
-            {
-            DodId = 1,
-                MilitaryComponentTypeId =2,
-                StateTypeId =3,
-                Unit =4,
 
-        }
-            string dod = DodId;
-            string m = MilitaryComponentTypeId;
-            string s = StateTypeId;
-            string u = Unit;
-            string e = Email;
-            string fr = IsFirstResponder;
-
-        }
-
-        {
-            return dod;
-        }
-        
