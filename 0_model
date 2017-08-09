@@ -1,0 +1,56 @@
+
+///////
+employment model:
+
+using System;
+using System.ComponentModel.DataAnnotations;
+using ASI.CEI.Core.Entities;
+
+namespace ASI.CEI.Domain.DomainObjects.Cei.Employment
+{
+	public class EmploymentModel : BusinessObject
+	{
+		[Required]
+		public Guid EmploymentTypeId { get; set; }
+	}
+}
+
+////full time model/////
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using ASI.CEI.Domain.Validators.Employment;
+
+namespace ASI.CEI.Domain.DomainObjects.Cei.Employment
+{
+	public class FullTimeEmploymentModel : EmploymentModel
+	{
+		[Required, MaxLength(10)]
+		public string SocCode { get; set; }
+		[Required]
+		public Guid? CountryTypeId { get; set; }
+		public Guid? StateTypeId { get; set; }
+		public bool? IsSelfEmployed { get; set; }
+		[Required, MaxLength(50)]
+		public string YourPosition { get; set; }
+		public bool? IsCurrentPosition { get; set; }
+		[Required]
+		public DateTime? DatePositionBegan { get; set; }
+		public DateTime? DatePositionEnd { get; set; }
+		[Required, MaxLength(50)]
+		public string EmployerName { get; set; }
+		[Required, MaxLength(50)]
+		public string EmployerAddress { get; set; }
+		[MaxLength(50)]
+		public string EmployerAddress2 { get; set; }
+		[Required, MaxLength(50)]
+		public string EmployerCity { get; set; }
+		public string EmployerZipCode { get; set; }
+
+		protected override IEnumerable<ValidationResult> CustomValidate()
+		{
+			return new FullTimeEmploymentValidator().Validate(this);
+		}
+	}
+}
