@@ -1,0 +1,38 @@
+[TestMethod]
+        //17. API_PersonalDetails_IS_a_Trained_First_Responder-selected
+        public void API_CEI_should_submitted_sucessfully_when_I_AM_A_Trained_First_Responder_Field_has_been_selected()
+        {
+            restRequest.RequestFormat = DataFormat.Json;
+
+            //request
+            var cei = GetTestCeiModel();
+            cei.PersonalDetails.IsFirstResponder = true;     
+            
+            var json = restRequest.JsonSerializer.Serialize(cei);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+            IRestResponse restResponse = restClient.Execute(restRequest);
+
+            //assert 
+            Assert.AreEqual(HttpStatusCode.OK, restResponse.StatusCode);
+        }
+        
+        
+          [TestMethod]
+        //18. API_validate_Self_Employed_field is optional
+        public void API_without_Self_Employed_field_cei_should_submitted_sucessfully()
+        {
+            restRequest.RequestFormat = DataFormat.Json;
+
+            //request
+            var cei = GetTestCeiModelFullTime();
+            cei.Employment.First();
+
+           // cei.Employment.First().EmploymentTypeId.Equals("PartTimeId").
+           
+
+            var json = restRequest.JsonSerializer.Serialize(cei);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            Assert.AreEqual(HttpStatusCode.OK, restResponse.StatusCode);
+        }
