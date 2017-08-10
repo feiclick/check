@@ -1,0 +1,105 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using ASI.CEI.Domain.DomainObjects.Cei;
+using ASI.CEI.Domain.DomainObjects.Cei.Employment;
+using ASI.CEI.Entities;
+
+namespace ASI.CEI.APITests
+{
+    public class TestHelper
+    {
+
+        public static CeiModel GetTestCeiModel()
+        {
+            return new CeiModel
+            {
+                PersonalDetails = new PersonModel
+                {
+                    DodId = "0123456789",
+                    MilitaryComponentTypeId = MilitaryComponentType.Constants.AirForceReserveId,
+                    StateTypeId = StateType.Constants.AlabamaId,
+                    Unit = "25 AERIAL PORT SQUADRON",
+                    Email = "some@email.com",
+                    IsFirstResponder = false
+                },
+                Employment = new List<EmploymentModel>
+            {
+                new PartTimeEmploymentModel
+                {
+                    EmploymentTypeId = EmploymentType.Constants.PartTimeId,
+                    CountryTypeId = CountryType.Constants.USAId,
+                    StateTypeId = StateType.Constants.AlabamaId,
+                    IsSelfEmployed = false,
+                    YourPosition = "SomePosition",
+                    IsCurrentPosition = false,
+                    DatePositionBegan = DateTime.UtcNow,
+                    DatePositionEnd = DateTime.UtcNow,
+                    EmployerName = "Employer Name",
+                    EmployerCity = "Employer City",
+                    EmployerAddress = "Employer address",
+                    EmployerAddress2 = "Employer address2",
+                    EmployerZipCode = "12345",
+                    SocCode = "11-1111"
+                }
+            }
+            };
+        }
+        /*
+        
+        public static CeiModel GetTestCeiModelPartTime()
+        {
+            var model = GetTestCeiModel();
+            model.Employment = new List<EmploymentModel>
+            {
+                new PartTimeEmploymentModel
+                {
+                    EmploymentTypeId = EmploymentType.Constants.PartTimeId,
+                    CountryTypeId = CountryType.Constants.USAId,
+                    StateTypeId = StateType.Constants.AlabamaId,
+                    IsSelfEmployed = false,
+                    YourPosition = "SomePosition",
+                    IsCurrentPosition = false,
+                    DatePositionBegan = DateTime.UtcNow,
+                    DatePositionEnd = DateTime.UtcNow,
+                    EmployerName = "Employer Name",
+                    EmployerCity = "Employer City",
+                    EmployerAddress = "Employer address",
+                    EmployerAddress2 = "Employer address2",
+                    EmployerZipCode = "12345",
+                    SocCode = "11-1111"
+                }
+            };
+            return model;
+        }
+
+        public static CeiModel GetTestCeiModelFullTime()
+        {
+            var model = GetTestCeiModel();
+            model.Employment = new List<EmploymentModel>
+            {
+                new FullTimeEmploymentModel()
+                {
+                    EmploymentTypeId = EmploymentType.Constants.FullTimeId,
+                    CountryTypeId = CountryType.Constants.USAId,
+                    StateTypeId = StateType.Constants.CaliforniaId,
+                    IsSelfEmployed = false,
+                    YourPosition = "SomePosition",
+                    IsCurrentPosition = false,
+                    DatePositionBegan = DateTime.UtcNow,
+                    DatePositionEnd = DateTime.UtcNow,
+                    EmployerName = "Employer Name",
+                    EmployerCity = "Employer City",
+                    EmployerAddress = "Employer address",
+                    EmployerAddress2 = "Employer address2",
+                    EmployerZipCode = "12345",
+                    SocCode = "11-1111"
+                }
+            };
+            return model;
+        }
+        */
+    }
+}
