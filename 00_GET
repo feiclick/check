@@ -1,0 +1,46 @@
+
+[TestMethod]
+        //Positive_15. Validate Student Employment type
+        public void API_Student_Employment_cei_should_be_work_correctly()
+        {
+            restRequest.RequestFormat = DataFormat.Json;
+
+            //request
+            var cei = GetTestCeiModel();
+            var student = GetTestStudentEmploymentModel();
+            cei.Employment = new List<EmploymentModel>
+            {
+                student
+            };
+
+            var json = restRequest.JsonSerializer.Serialize(cei);
+            restRequest.AddParameter("application/json; charset=utf-8", json, ParameterType.RequestBody);
+
+            IRestResponse restResponse = restClient.Execute(restRequest);
+            Assert.AreEqual(HttpStatusCode.OK, restResponse.StatusCode);
+        }
+
+
+
+            var resultdata = restResponse.Content;
+            StringAssert.Contains(resultdata, "The DatePositionEnd field is required.");
+            //
+            restClient = new RestClient("https://cei-test.jointservicessupport.org/api/cei/GetData?apiKey=19db64da-851b-4d72-abf6-08a21a78dd58&personId=");
+            restRequest = new RestRequest($"{personId}"+"&dodId=0123456789/", Method.GET);
+
+            //assert
+            Assert.AreEqual(cei.PersonalDetails.MilitaryComponentTypeId,MilitaryComponentType.Constants.AirNationalGuardId);
+            Assert.AreEqual(cei.PersonalDetails.StateTypeId, StateType.Constants.NewYorkId);
+
+           // string content = resultdata;
+
+          //  var content = JsonConvert.DeserializeObject<Content>(resultdata);
+           
+
+            //const string content = "{\"one\":\"oneOneOne\", \"two\":\"twoTwoTwo\", \"three\":3}";
+            JsonDeserializer json2 = new JsonDeserializer();
+
+          // output = json2.Deserialize<>(new RestResponse { Content = content });
+
+
+restResponse.Content = "{\"Success\":true,\"Message\":null,\"Content\":\"d1d99bb5-9226-7d22-c5d3-11e7812d5a4a\"}"
