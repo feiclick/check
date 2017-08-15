@@ -44,3 +44,30 @@
 
 
 restResponse.Content = "{\"Success\":true,\"Message\":null,\"Content\":\"d1d99bb5-9226-7d22-c5d3-11e7812d5a4a\"}"
+
+public class RestMessage{
+    public string Success{ get; set; }
+    public string message{ get; set; }
+     public string Content{ get; set; }
+}
+
+///////console app/////
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            //string data = response.Content;
+            //"{\"Success\":true,\"Message\":null,\"Content\":\"d1d99bb5-9226-7d22-c5d3-11e7812d5a4a\"}"
+            string data = @"{""Success"":""true"",""Message"":""null"",""Content"":""d1d99bb5-9226-7d22-c5d3-11e7812d5a4a""}";
+
+            Dictionary<string, object> values = JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
+
+            object test;
+            if (values.TryGetValue("Content", out test)) // Returns true.
+            {
+                Console.WriteLine(test); // This is the value at key1.
+                Console.ReadKey();
+            }
+        }
+    }
+    ///////////
