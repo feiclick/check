@@ -29,7 +29,12 @@
             string personid= p.SubmitCEI();
                      
             restClient = new RestClient("https://cei-test.jointservicessupport.org/api/cei/GetData?apiKey=19db64da-851b-4d72-abf6-08a21a78dd58&personId=");
-            restRequest = new RestRequest($"{personId}"+"&dodId=0123456789/", Method.GET);
+            IRestRequest restRequest2;
+            IRestResponse getResponse2;
+            restRequest2 = new RestRequest($"{personId}"+"&dodId=0123456789/", Method.GET);
+                      
+            getResponse2 = restClient.Execute(restRequest2);
+            var resultdata2 = restResponse.Content;
 
             //assert
             Assert.AreEqual(cei.PersonalDetails.MilitaryComponentTypeId,MilitaryComponentType.Constants.AirNationalGuardId);
