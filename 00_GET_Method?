@@ -6,16 +6,22 @@
             var Client = new RestClient("https://...//");
             var request = new RestRequest("api/cei/submit", Method.POST);
             // cei request
-
+ 
             //response
             var response = Client.Execute(request);
             string content = response.Content;
+            
             Dictionary<string, object> values = JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
 
             object test;
             if ( values.TryGetValue("Content", out test)) //return true         
-
-            return content;
+            {   
+            return test;
+            }
+            else return "no Content Value";
+            
+            
+            
             
          }
       }
