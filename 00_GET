@@ -25,7 +25,7 @@
             var resultdata = restResponse.Content;
             StringAssert.Contains(resultdata, "The DatePositionEnd field is required.");
             
-            //POST p = new POST();
+            POST p = new POST();
             string personid= p.SubmitCEI();
                      
             restClient = new RestClient("https://cei-test.jointservicessupport.org/api/cei/GetData?apiKey=19db64da-851b-4d72-abf6-08a21a78dd58&personId=");
